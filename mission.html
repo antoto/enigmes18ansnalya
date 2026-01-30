@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>PROJET X.28</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --accent: #6a11cb; 
+            --pink: #ff7eb9; 
+            --bg: #0f0c29;
+            --glass: rgba(255, 255, 255, 0.07);
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-attachment: fixed;
+            margin: 0; color: white; min-height: 100vh; padding-bottom: 80px;
+        }
+
+        /* --- HEADER --- */
+        .mission-header {
+            padding: 60px 20px 30px 20px;
+            text-align: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .mission-badge {
+            display: inline-block; padding: 5px 15px; border: 1px solid var(--pink);
+            border-radius: 5px; font-family: 'Fira Code', monospace; font-size: 0.7rem;
+            color: var(--pink); text-transform: uppercase; margin-bottom: 15px; letter-spacing: 2px;
+        }
+
+        .mission-header h1 {
+            font-size: 2.5rem; 
+            font-weight: 700; 
+            margin: 0; 
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, #ccc);
+            -webkit-background-clip: text; /* Pour Chrome/Safari */
+            background-clip: text;         /* La version standard que VS Code réclame */
+            -webkit-text-fill-color: transparent;
+        }
+
+        .mission-sub {
+            font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #888;
+            letter-spacing: 4px; margin-top: 5px; text-transform: uppercase;
+        }
+
+        /* --- BARRE DE PROGRESSION --- */
+        .progress-wrapper { max-width: 280px; margin: 25px auto 0 auto; }
+        .progress-info { display: flex; justify-content: space-between; font-family: 'Fira Code', monospace; font-size: 0.6rem; margin-bottom: 8px; color: var(--pink); }
+
+        .status-container { background: rgba(255,255,255,0.1); height: 6px; border-radius: 10px; overflow: hidden; }
+        .status-bar { width: 0%; height: 100%; background: linear-gradient(to right, var(--accent), var(--pink)); box-shadow: 0 0 15px var(--pink); transition: width 0.8s ease; }
+
+        /* --- PROTOCOLE --- */
+        .protocol-box {
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px; padding: 30px; margin: 30px auto; max-width: 480px;
+            backdrop-filter: blur(10px); text-align: left;
+        }
+        .protocol-box h3 { color: white; margin: 0 0 20px 0; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; }
+        .protocol-box h3::before { content: ''; width: 4px; height: 20px; background: var(--pink); margin-right: 12px; border-radius: 2px; }
+        .protocol-list { padding: 0; list-style: none; font-size: 0.85rem; line-height: 1.8; color: #d1d1d1; }
+        .protocol-list li { margin-bottom: 12px; }
+
+        /* --- CARTES D'INDICES --- */
+        .container { max-width: 500px; margin: 0 auto; padding: 0 20px; text-align: center;}
+        
+        .hint-card {
+            background: rgba(255, 255, 255, 0.95); border-radius: 24px; padding: 22px; 
+            margin-bottom: 25px; display: flex; align-items: center; color: #333;
+            transition: 0.4s ease; opacity: 0; transform: translateY(20px); text-align: left;
+        }
+        .is-ready { opacity: 1; transform: translateY(0); }
+
+        .date-badge {
+            min-width: 65px; height: 65px; background: linear-gradient(135deg, var(--accent), var(--pink));
+            color: white; border-radius: 18px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; margin-right: 20px;
+        }
+        .date-badge strong { font-size: 1.4rem; line-height: 1; }
+        .date-badge span { font-size: 0.7rem; text-transform: uppercase; }
+
+        .is-blur { filter: blur(5px); cursor: pointer; user-select: none; transition: filter 1.2s ease; opacity: 0.7; }
+        .hint-text { font-size: 0.9rem; line-height: 1.4; width: 100%; font-weight: 500; }
+
+        .countdown-label { display: block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 2px; font-weight: bold;}
+        .countdown-small { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: var(--accent); font-weight: bold; }
+
+        /* --- POP-UP --- */
+        #mission-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 20, 0.95); backdrop-filter: blur(15px);
+            display: none; align-items: center; justify-content: center; z-index: 9999;
+        }
+        .popup-content {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px; border-radius: 35px; width: 85%; max-width: 400px; text-align: center;
+        }
+        .popup-btn {
+            background: white; color: black; border: none; padding: 18px 35px; border-radius: 50px;
+            font-weight: 700; margin-top: 25px; cursor: pointer; width: 100%; text-transform: uppercase;
+        }
+
+        /* --- PANNEAU ADMIN --- */
+        #admin-panel { 
+            position: fixed; bottom: 20px; right: 20px; background: white; padding: 15px; 
+            border-radius: 20px; display: none; z-index: 10000; color: #333; width: 220px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .admin-btn { width: 100%; padding: 10px; margin-top: 8px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
+    </style>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Enigmes 18">
+<link rel="apple-touch-icon" href="https://fav.farm/🕵️">
+<link rel="icon" href="https://fav.farm/🕵️">
+</head>
+<body>
+
+<audio id="unlock-sound" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3"></audio>
+
+<div id="mission-popup">
+    <div class="popup-content">
+        <div style="font-size: 3rem; margin-bottom: 15px;">⏳</div>
+        <div style="font-weight: 700; color: white; margin-bottom: 10px; text-transform: uppercase;">Alerte Mission</div>
+        <p style="font-size: 0.9rem; color: #ccc;">Un nouveau fragment vient de se débloquer.</p>
+        <button class="popup-btn" onclick="closePopup()">Découvrir</button>
+    </div>
+</div>
+
+<header class="mission-header">
+    <div class="mission-badge">Ton cadeau commence ici 🤫</div>
+    <h1>IL N’Y A PAS DE RETOUR EN ARRIÈRE</h1>
+    <div class="mission-sub">NALYA-2026</div>
+    
+    <div class="progress-wrapper">
+        <div class="progress-info">
+            <span id="departure-timer">Calcul...</span>
+            <span id="status-percent">0%</span>
+        </div>
+        <div class="status-container">
+            <div class="status-bar" id="status-bar"></div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="protocol-box">
+        <h3>📋 NOTE DE MISSION À LIRE ATTENTIVEMENT :</h3>
+        <ul class="protocol-list">
+            <li><b>Nalya</b>, ce lien est ton seul guide. Voici les règles de l'opération :</li>
+            <li>• <b>Bloque ta journée :</b> Le <b>28 JUILLET</b> t'appartient entièrement. Ne prévois rien d'autre, de l'aube jusqu'au crépuscule.</li>
+            <li>• <b>Un jour, un fragment :</b> À minuit pile, une nouvelle case s'active. Clique sur le flou pour voir l'indice.</li>
+            <li>• <b>Le Dress Code :</b> Prépare une tenue où tu te trouves <b>magnifique</b> (il y aura des photos !), mais attention : tes chaussures doivent être tes meilleures alliées. Le confort est l'unique clé de cette journée.</li>
+            <li>• <b>Le Secret :</b> N'essaie pas de deviner. Même le matin du départ, le mystère restera entier. Laisse-toi simplement porter.</li>
+            <li style="margin-top: 20px; color: var(--pink); font-size: 0.8rem; text-align: center;"><b>CONSEIL :</b> Ajoute cette page à tes raccourcis pour ne rien manquer.</li>
+        </ul>
+    </div>
+
+    <div id="puzzles-list"></div>
+</div>
+
+<div id="secret-trigger" style="text-align:center; padding:40px; opacity:0.01; cursor: pointer; user-select: none;">
+    Accès restreint
+</div>
+
+<div id="admin-panel">
+    <div onclick="this.parentElement.style.display='none'" style="cursor:pointer; text-align:right; font-weight:bold;">✕</div>
+    <p style="font-size: 0.7rem; margin-bottom: 5px;">Simulateur Temporel</p>
+    <input type="date" id="test-date" style="width:100%; padding: 5px; box-sizing: border-box;">
+    <button class="admin-btn" style="background:var(--accent); color:white;" onclick="setTestDate()">Voyager</button>
+    <button class="admin-btn" onclick="localStorage.clear(); location.reload();">Reset Progression</button>
+</div>
+
+<script>
+    const MES_ENIGMES = [
+        { date: "2026-01-29", texte: "Je suis un endroit en France,<br>Entouré par la mer... mais seulement une partie du temps.<br>Tantôt prisonnier des flots, tantôt relié aux hommes,<br>Qui suis-je, quand la mer décide de jouer avec le sable ?" },
+        { date: "2026-01-30", texte: "Je suis le lieu de création de la potion.<br>On ne me boit pas sans sagesse,<br> Je nais d'un mélange ancien,<br>Entre savoir, nature... et secret bien gardé.<br>Quel est ce lieu où l'on crée sans jamais révéler la recette ?" },
+        { date: "2026-01-31", texte: "Je suis un lieu français,<br>Très important pendant la Seconde Guerre mondiale.<br>Mon sol a tremblé,<br>Mon histoire à changé le monde,<br>Et ma mémoire n'a jamais quitté les livres.<br>Qui suis-je ?" },
+        { date: "2026-02-01", texte: "Toute ton enfance est réunie dans ce lieu. <br> Les rêves y marchent,<br>Les héros y parlent,<br>Et les souvenirs y rient encore.<br>Où ton regard d'enfant n'a-t-il jamais vraiment grandi ?" },
+        { date: "2026-02-02", texte: "La flamme est arrivée par bêteau là-bas.<br>Elle n'est pas née ici,<br>Mais elle y a été accueillie,<br>Portée par l'eau avant d'embrasser la terre.<br>Quel lieu a vu la flamme poser pied après la mer ?" },
+        { date: "2026-02-03", texte: "Je suis un lieu hors du présent.<br>Ni passé, ni maintenant,<br>Je regarde devant quand les autres regardent autour.<br> Où va-t-on quand on quitte le temps sans quitter la Frnace ?" },
+        { date: "2026-02-04", texte: "Le président se repose dans ce lieu.<br>Ce n'est pas son bureau,<br>Ce n'est pas le pouvoir,<br>Mais l'endroit où même les décisions se taisent.<br>Où le chef de l'État pose-t-il sa fatigue ?" },
+        { date: "2026-02-05", texte: "Je suis un lieu rempli de mignonnerie.<br>On y sourit sans raison,<br>On y parle doucement<br>Et les yeux brillent plus que les mots.<br>Où la tendresse a-t-elle élu domicile ?" },
+        { date: "2026-02-06", texte: "Je suis un lieu de spectacles historiques nombreux.<br>La passé y joue au présent,<br>Les siècles montent sur scène,<br>Et l'histoire ne se lit plus...elle se regarde.<br>Quel lieu fait revivre ce qui n'est plus ?" },
+        { date: "2026-02-07", texte: "Ce n'est pas un lieu qu'on devine,<br>C'est un nom qui sert plus souvent d'idée que d'endroit." },
+        { date: "2026-02-08", texte: "<b>Tu es arrivée au bout sans jamais vraiment arriver.</b><br>Tu as cherché des lieux, des noms, des réponses, mais ce cadeau n’était pas une destination à deviner.<br><br><b>Félicitations.</b><br>Tu as suivi le jeu sans en connaître la règle.<br><br><b>La suite ne se lit pas.</b><br><b>Elle se vit.</b><br><br><b>Rendez-vous à 6h45, devant chez toi.</b><br><b>Prête.</b>" }
+    ];
+
+    const DATE_DEPART_FINALE = "2026-02-08T06:45:00"; 
+
+    let simDate = null;
+    let hasNotified = false;
+    let adminClicks = 0;
+    let clickTimer;
+
+    // Clic secret
+    document.getElementById('secret-trigger').addEventListener('click', function() {
+        adminClicks++;
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => { adminClicks = 0; }, 2000);
+        if (adminClicks >= 5) {
+            document.getElementById('admin-panel').style.display = 'block';
+            adminClicks = 0;
+        }
+    });
+
+    function init() {
+        const list = document.getElementById('puzzles-list');
+        if(!list) return;
+        list.innerHTML = "";
+        MES_ENIGMES.forEach((e, i) => {
+            const d = new Date(e.date + "T00:00:00");
+            list.innerHTML += `
+                <div class="hint-card" id="card-${i}">
+                    <div class="date-badge">
+                        <span>${d.toLocaleString('fr-FR',{month:'short'})}</span>
+                        <strong>${d.getDate()}</strong>
+                    </div>
+                    <div class="hint-content" id="content-${i}"></div>
+                </div>`;
+        });
+        setTimeout(() => {
+            document.querySelectorAll('.hint-card').forEach(c => c.classList.add('is-ready'));
+        }, 100);
+        updateUI();
+    }
+
+    function updateUI() {
+        const now = simDate || new Date();
+        const targetDeparture = new Date(DATE_DEPART_FINALE);
+        let unlockedCount = 0;
+
+        MES_ENIGMES.forEach((e, i) => {
+            const dateCible = new Date(e.date + "T00:00:00");
+            const cont = document.getElementById(`content-${i}`);
+            if(!cont) return;
+
+            if (now >= dateCible) {
+                const isRevealed = localStorage.getItem('enigme_'+e.date) === 'true';
+                if (isRevealed) unlockedCount++;
+
+                if (!cont.querySelector('.hint-text')) {
+                    cont.innerHTML = `<div class="hint-text ${isRevealed ? '' : 'is-blur'}" onclick="reveal('${e.date}', this)">${e.texte}</div>`;
+                }
+                
+                if (!isRevealed && !hasNotified && (simDate || now.toDateString() === dateCible.toDateString())) {
+                    forcePopup();
+                }
+            } else {
+                const diff = dateCible - now;
+                const d = Math.floor(diff / 86400000);
+                const h = Math.floor((diff % 86400000) / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+                cont.innerHTML = `
+                    <span class="countdown-label">Se déverrouille dans :</span>
+                    <div class="countdown-small">${d}j ${h}h ${m}m ${s}s</div>
+                `;
+            }
+        });
+
+        const diffDep = targetDeparture - now;
+        const timerEl = document.getElementById('departure-timer');
+        if (timerEl) {
+            if (diffDep > 0) {
+                const dJ = Math.floor(diffDep / 86400000);
+                const dH = Math.floor((diffDep % 86400000) / 3600000);
+                const dM = Math.floor((diffDep % 3600000) / 60000);
+                const dS = Math.floor((diffDep % 60000) / 1000);
+                timerEl.innerText = `Départ dans ${dJ}j ${dH}h ${dM}m ${dS}s`;
+            } else {
+                timerEl.innerText = "L'aventure commence.";
+            }
+        }
+
+        const progress = Math.round((unlockedCount / MES_ENIGMES.length) * 100);
+        const bar = document.getElementById('status-bar');
+        const per = document.getElementById('status-percent');
+        if(bar) bar.style.width = progress + "%";
+        if(per) per.innerText = progress + "%";
+    }
+
+    function reveal(id, el) {
+        if (el.classList.contains('is-blur')) {
+            el.classList.remove('is-blur');
+            localStorage.setItem('enigme_'+id, 'true');
+            document.getElementById('unlock-sound').play().catch(()=>{});
+            setTimeout(updateUI, 500);
+        }
+    }
+
+    function closePopup() { document.getElementById('mission-popup').style.display = 'none'; }
+    function forcePopup() { document.getElementById('mission-popup').style.display = 'flex'; hasNotified = true; }
+    
+    function setTestDate() { 
+        const v = document.getElementById('test-date').value;
+        if(v) { 
+            simDate = new Date(v + "T00:00:01"); 
+            hasNotified = false;
+            updateUI(); 
+        }
+    }
+
+    init();
+    setInterval(updateUI, 1000);
+</script>
+</body>
+</html>

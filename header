@@ -1,0 +1,45 @@
+<header class="mission-header">
+    <div class="mission-badge">Séquence Active</div>
+    <h1>PROJET : X.28</h1>
+    <div class="mission-sub">NALYA-2026</div>
+    
+    <div class="progress-wrapper">
+        <div class="progress-info">
+            <span id="status-text">Initialisation...</span>
+            <span id="status-percent">0%</span>
+        </div>
+        <div class="status-container">
+            <div class="status-bar" id="status-bar"></div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="protocol-box">
+        <h3>PROTOCOLE DE L'EXPÉRIENCE</h3>
+        <ul class="protocol-list">
+            <li>Nalya, ce lien est ton seul guide. Voici les règles de l'opération :</li>
+            <li>• <b>Bloque ta journée :</b> Le <b>28 JUILLET</b> t'appartient entièrement. Ne prévois rien d'autre, de l'aube jusqu'au crépuscule.</li>
+            <li>• <b>Un jour, un fragment :</b> À minuit pile, une nouvelle case s'active. Clique sur le flou pour voir l'indice.</li>
+            <li>• <b>Le Dress Code :</b> Prépare une tenue où tu te trouves <b>magnifique</b> (il y aura des photos !), mais attention : tes chaussures doivent être tes meilleures alliées. Le confort est l'unique clé de cette journée.</li>
+            <li>• <b>Le Secret :</b> N'essaie pas de deviner. Même le matin du départ, le mystère restera entier. Laisse-toi simplement porter.</li>
+            <li style="margin-top: 20px; color: var(--pink); font-size: 0.8rem; text-align: center;"><b>CONSEIL :</b> Ajoute cette page à tes raccourcis pour ne rien manquer.</li>
+        </ul>
+        <p style="font-style: italic; font-size: 0.75rem; color: #888; text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">"L'attente fait partie du voyage. À demain..."</p>
+    </div>
+</div>
+
+
+const MES_ENIGMES = [
+        { date: "2026-01-29", texte: "Je suis un endroit en France,<br>Entouré par la mer... mais eulement une partie du temps.<br>Tantôt prisonnier des flots, tantôt relié aux hommes,<br>Qui suis-je, quand la mer décide de jouer avec le sable ?" },
+        { date: "2026-01-30", texte: "Je suis le lieu de création de la potion.<br>On ne me boit pas sans sagesse,<br> Je nais d'un mélange ancien,<br>Entre savoir, nature... et secret bien gardé.<br>Quel est ce lieu où l'on crée sans jamais révéler la recette ?" },
+        { date: "2026-01-31", texte: "Je suis un lieu français,<br>Très important pendant la Seconde Guerre mondiale.<br>Mon sol a tremblé,<br>Mon histoire à changé le monde,<br>Et ma mémoire n'a jamais quitté les livres.<br>Qui suis-je ?" },
+        { date: "2026-02-01", texte: "Toute ton enfance est réunie dans ce lieu. <br> Les rêves y marchent,<br>Les héros y parlent,<br>Et les souvenirs y rient encore.<br>Où ton regard d'enfant n'a-t-il jamais vraiment grandi ?" },
+        { date: "2026-02-02", texte: "La flamme est arrivée par bêteau là-bas.<br>Elle n'est pas née ici,<br>Mais elle y a été accueillie,<br>Portée par l'eau avant d'embrasser la terre.<br>Quel lieu a vu la flamme poser pied après la mer ?" },
+        { date: "2026-02-03", texte: "Je suis un lieu hors du présent.<br>Ni passé, ni maintenant,<br>Je regarde devant quand les autres regardent autour.<br> Où va-t-on quand on quitte le temps sans quitter la Frnace ?" },
+        { date: "2026-02-04", texte: "Le président se repose dans ce lieu.<br>Ce n'est pas son bureau,<br>Ce n'est pas le pouvoir,<br>Mais l'endroit où même les décisions se taisent.<br>Où le chef de l'État pose-t-il sa fatigue ?" },
+        { date: "2026-02-05", texte: "Je suis un lieu rempli de mignonnerie.<br>On y sourit sans raison,<br>On y parle doucement<br>Et les yeux brillent plus que les mots.<br>Où la tendresse a-t-elle élu domicile ?" },
+        { date: "2026-02-06", texte: "Je suis un lieu de spectacles historiques nombreux.<br>La passé y joue au présent,<br>Les siècles montent su scène,<br>Et l'histoire ne se lit plus...elle se regarde.<br>Quel lieu fait revivre ce qui n'est plus ?" },
+        { date: "2026-02-07", texte: "Ce n'est pas un lieu qu'on devine,<br>C'est un nom qui sert plus souvent d'idée que d'endroit." },
+        { date: "2026-02-08", texte: "Indice numéro 11" }
+    ];

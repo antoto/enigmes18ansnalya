@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TRANSMISSION PRIORITAIRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --accent: #6a11cb; 
+            --pink: #ff7eb9; 
+            --bg: #0f0c29;
+            --glass: rgba(255, 255, 255, 0.07);
+        }
+
+        body { 
+            background: #000; color: #0f0; font-family: 'Fira Code', monospace; 
+            margin: 0; height: 100vh; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; overflow: hidden; 
+        }
+        
+        #terminal { width: 90%; max-width: 400px; margin-bottom: 20px; }
+        .log { font-size: 0.75rem; margin-bottom: 8px; border-left: 2px solid #0f0; padding-left: 10px; opacity: 0; }
+        
+        #loading-zone { display: none; width: 80%; text-align: center; }
+        .progress-container { width: 100%; height: 20px; border: 1px solid #0f0; margin-top: 10px; position: relative; padding: 2px; }
+        .progress-fill { width: 0%; height: 100%; background: #0f0; box-shadow: 0 0 15px #0f0; transition: width 0.1s linear; }
+        .percent { font-size: 1.5rem; font-weight: bold; margin-bottom: 5px; }
+
+        #video-wrap { 
+            display: none; width: 90%; max-width: 320px; border: 2px solid #fff; 
+            border-radius: 15px; overflow: hidden; box-shadow: 0 0 50px rgba(0,255,0,0.3);
+        }
+
+        #final-screen { 
+            display: none; flex-direction: column; align-items: center;
+            width: 100%; height: 100vh; padding: 60px 20px 40px 20px; box-sizing: border-box;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            overflow-y: auto; text-align: center;
+        }
+
+        .mission-badge {
+            display: inline-block; padding: 5px 15px; border: 1px solid var(--pink);
+            border-radius: 5px; font-family: 'Fira Code', monospace; font-size: 0.7rem;
+            color: var(--pink); text-transform: uppercase; margin-bottom: 15px; letter-spacing: 2px;
+        }
+
+        .hb-title { 
+            font-family: 'Poppins', sans-serif; font-weight: 900; font-size: 3rem; 
+            line-height: 0.9; margin: 0; letter-spacing: -2px;
+            background: linear-gradient(to right, #fff, #ccc);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .group-photo-container {
+            margin: 30px 0; position: relative; width: 100%; max-width: 340px;
+        }
+
+        .group-photo { 
+            width: 100%; border-radius: 24px; border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            transform: rotate(-1deg);
+        }
+
+        .protocol-box {
+            background: var(--glass); 
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px; 
+            padding: 25px; 
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px); 
+            text-align: center;
+            width: 95%; 
+            max-width: 400px; 
+            box-sizing: border-box; 
+        }
+
+        .personal-note { 
+            font-family: 'Poppins', sans-serif; color: #d1d1d1; font-size: 0.9rem; 
+            line-height: 1.6; margin: 0;
+        }
+        .personal-note b { color: var(--pink); font-weight: 700; }
+
+        .btn-mission { 
+            background: white; color: black; text-decoration: none; padding: 18px 40px;
+            border-radius: 50px; font-weight: 700; font-family: 'Poppins', sans-serif; 
+            text-transform: uppercase; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: 0.3s; width: 80%; max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="terminal">
+        <div id="logs-container"></div>
+    </div>
+
+    <div id="loading-zone">
+        <div class="percent" id="pc">0%</div>
+        <div style="font-size: 0.7rem; text-transform: uppercase;">Téléchargement du flux vidéo...</div>
+        <div class="progress-container">
+            <div class="progress-fill" id="pb"></div>
+        </div>
+        <div style="font-size: 0.6rem; margin-top: 10px; color: #888;">LIAISON : SUPER DÉVOLUY > RIVES-EN-SEINE</div>
+    </div>
+
+    <div id="video-wrap">
+        <video id="introVid" width="100%" playsinline muted>
+            <source src="videotest.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div id="final-screen">
+        <div class="mission-badge">Accès Autorisé</div>
+        <h1 class="hb-title">JOYEUX<br>18 ANS !</h1>
+        
+        <div class="group-photo-container">
+            <img src="EthanNalya.jpg" class="group-photo">
+        </div>
+        
+        <div class="protocol-box">
+            <p class="personal-note">
+                "Certaines portes ne s'ouvrent qu'une fois. <br><br>
+                Le seuil des 18 ans est franchi, mais l'accès à ce qui t'est destiné reste suspendu. Ce qui t'attend n'est pas un simple présent, c'est une récompense qui exige de la persévérance.<br><br>
+                <b>Nalya</b>, le compte à rebours a commencé. Sauras-tu déchiffrer ce que le futur te réserve ou resteras-tu à la porte ?"
+            </p>
+        </div>
+        
+        <a href="mission.html" class="btn-mission">Démarrer la mission</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        const logs = [
+            "> Localisation cible : NALYA...",
+            "> Analyse des serveurs... [OK]",
+            "> Émetteur : SUPER DÉVOLUY (05)",
+            "> Connexion satellite établie."
+        ];
+
+        let logIdx = 0;
+        function showLogs() {
+            if (logIdx < logs.length) {
+                const l = document.createElement('div');
+                l.className = 'log';
+                l.innerHTML = logs[logIdx];
+                document.getElementById('logs-container').appendChild(l);
+                l.style.opacity = '1';
+                logIdx++;
+                setTimeout(showLogs, 1200);
+            } else {
+                setTimeout(startLoading, 1000);
+            }
+        }
+
+        function startLoading() {
+            document.getElementById('terminal').style.display = 'none';
+            document.getElementById('loading-zone').style.display = 'block';
+            let width = 0;
+            const bar = document.getElementById('pb');
+            const perc = document.getElementById('pc');
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(showVideo, 500);
+                } else {
+                    width += Math.random() * 3; 
+                    if(width > 100) width = 100;
+                    bar.style.width = width + '%';
+                    perc.innerHTML = Math.floor(width) + '%';
+                }
+            }, 80);
+        }
+
+        function showVideo() {
+            document.getElementById('loading-zone').style.display = 'none';
+            const wrap = document.getElementById('video-wrap');
+            const v = document.getElementById('introVid');
+            wrap.style.display = 'block';
+            v.play().catch(() => { revealFinalScreen(); });
+        }
+
+        function revealFinalScreen() {
+            document.getElementById('video-wrap').style.display = 'none';
+            document.getElementById('final-screen').style.display = 'flex';
+            confetti({ 
+                particleCount: 200, spread: 80, origin: { y: 0.7 }, 
+                colors: ['#ff7eb9', '#6a11cb', '#ffffff'] 
+            });
+        }
+
+        document.getElementById('introVid').addEventListener('ended', revealFinalScreen);
+        window.onload = showLogs;
+    </script>
+</body>
+</html>
