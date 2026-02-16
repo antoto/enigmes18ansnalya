@@ -19,115 +19,132 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
+        /* 1. VARIABLES & FOND : Définit l'identité visuelle globale */
         :root { 
             --accent: #6a11cb; 
             --pink: #ff7eb9; 
             --bg: #0f0c29;
-            --glass: rgba(255, 255, 255, 0.07);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.15);
         }
-
+    
         body { 
             font-family: 'Poppins', sans-serif; 
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: radial-gradient(circle at top right, #302b63, #0f0c29, #24243e);
             background-attachment: fixed;
             margin: 0; color: white; min-height: 100vh; padding-bottom: 80px;
+            overflow-x: hidden;
         }
-
-        /* --- HEADER --- */
+    
+        /* 2. HEADER : Le titre principal avec effet dégradé brillant */
         .mission-header {
             padding: 60px 20px 30px 20px;
             text-align: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-
+    
         .mission-badge {
-            display: inline-block; padding: 5px 15px; border: 1px solid var(--pink);
-            border-radius: 5px; font-family: 'Fira Code', monospace; font-size: 0.7rem;
-            color: var(--pink); text-transform: uppercase; margin-bottom: 15px; letter-spacing: 2px;
+            display: inline-block; padding: 6px 18px; border: 1px solid var(--pink);
+            border-radius: 50px; font-family: 'Fira Code', monospace; font-size: 0.65rem;
+            color: var(--pink); text-transform: uppercase; margin-bottom: 15px; 
+            letter-spacing: 2px; background: rgba(255, 126, 185, 0.1);
         }
-
+    
         .mission-header h1 {
-            font-size: 2.5rem; 
-            font-weight: 700; 
-            margin: 0; 
-            letter-spacing: -1px;
-            background: linear-gradient(to right, #fff, #ccc);
-            -webkit-background-clip: text; /* Pour Chrome/Safari */
-            background-clip: text;         /* La version standard que VS Code réclame */
-            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem; font-weight: 800; margin: 0; letter-spacing: -1px;
+            background: linear-gradient(to right, #ffffff, var(--pink));
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
         }
-
-        .mission-sub {
-            font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #888;
-            letter-spacing: 4px; margin-top: 5px; text-transform: uppercase;
-        }
-
-        /* --- BARRE DE PROGRESSION --- */
+    
+        /* 3. PROGRESSION : Barre de chargement style futuriste */
         .progress-wrapper { max-width: 280px; margin: 25px auto 0 auto; }
-        .progress-info { display: flex; justify-content: space-between; font-family: 'Fira Code', monospace; font-size: 0.6rem; margin-bottom: 8px; color: var(--pink); }
-
-        .status-container { background: rgba(255,255,255,0.1); height: 6px; border-radius: 10px; overflow: hidden; }
-        .status-bar { width: 0%; height: 100%; background: linear-gradient(to right, var(--accent), var(--pink)); box-shadow: 0 0 15px var(--pink); transition: width 0.8s ease; }
-
-        /* --- PROTOCOLE --- */
+        .progress-info { display: flex; justify-content: space-between; font-family: 'Fira Code', monospace; font-size: 0.6rem; margin-bottom: 8px; color: var(--pink); text-transform: uppercase; }
+    
+        .status-container { background: rgba(255,255,255,0.05); height: 4px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .status-bar { width: 0%; height: 100%; background: linear-gradient(to right, var(--accent), var(--pink)); box-shadow: 0 0 20px var(--pink); transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+        /* 4. PROTOCOLE : La boîte de texte d'introduction */
         .protocol-box {
-            background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px; padding: 30px; margin: 30px auto; max-width: 480px;
-            backdrop-filter: blur(10px); text-align: left;
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 24px; padding: 25px; margin: 30px auto; max-width: 450px;
+            backdrop-filter: blur(15px); text-align: left;
         }
-        .protocol-box h3 { color: white; margin: 0 0 20px 0; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; }
-        .protocol-box h3::before { content: ''; width: 4px; height: 20px; background: var(--pink); margin-right: 12px; border-radius: 2px; }
-        .protocol-list { padding: 0; list-style: none; font-size: 0.85rem; line-height: 1.8; color: #d1d1d1; }
-        .protocol-list li { margin-bottom: 12px; }
-
-        /* --- CARTES D'INDICES --- */
-        .container { max-width: 500px; margin: 0 auto; padding: 0 20px; text-align: center;}
+        .protocol-box h3 { color: white; margin: 0 0 15px 0; font-size: 1rem; font-weight: 700; display: flex; align-items: center; letter-spacing: 1px; }
+        .protocol-box h3::before { content: ''; width: 3px; height: 18px; background: var(--pink); margin-right: 10px; border-radius: 5px; box-shadow: 0 0 10px var(--pink); }
+        .protocol-list { padding: 0; list-style: none; font-size: 0.8rem; line-height: 1.7; color: #ccc; }
+        .protocol-list li { margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 8px; }
+    
+        /* 5. CARTES D'ÉNIGMES : Le coeur du design (Moderne & Coloré) */
+        .container { max-width: 500px; margin: 0 auto; padding: 0 20px; }
         
         .hint-card {
-            background: rgba(255, 255, 255, 0.95); border-radius: 24px; padding: 22px; 
-            margin-bottom: 25px; display: flex; align-items: center; color: #333;
-            transition: 0.4s ease; opacity: 0; transform: translateY(20px); text-align: left;
+            background: var(--glass) !important; 
+            border: 1px solid var(--glass-border);
+            border-radius: 22px; padding: 20px; margin-bottom: 20px;
+            display: flex; align-items: center; color: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; transform: translateY(30px);
+            backdrop-filter: blur(10px);
         }
         .is-ready { opacity: 1; transform: translateY(0); }
-
-        .date-badge {
-            min-width: 65px; height: 65px; background: linear-gradient(135deg, var(--accent), var(--pink));
-            color: white; border-radius: 18px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; margin-right: 20px;
+    
+        .hint-card:hover {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: var(--pink);
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(255, 126, 185, 0.15);
         }
-        .date-badge strong { font-size: 1.4rem; line-height: 1; }
-        .date-badge span { font-size: 0.7rem; text-transform: uppercase; }
-
-        .is-blur { filter: blur(5px); cursor: pointer; user-select: none; transition: filter 1.2s ease; opacity: 0.7; }
-        .hint-text { font-size: 0.9rem; line-height: 1.4; width: 100%; font-weight: 500; }
-
-        .countdown-label { display: block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 2px; font-weight: bold;}
-        .countdown-small { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: var(--accent); font-weight: bold; }
-
-        /* --- POP-UP --- */
+    
+        /* Badge de date avec dégradé vif */
+        .date-badge {
+            min-width: 65px; height: 65px; 
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            color: white; border-radius: 18px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; margin-right: 18px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .date-badge strong { font-size: 1.5rem; line-height: 1; font-weight: 800; }
+        .date-badge span { font-size: 0.6rem; text-transform: uppercase; font-weight: 700; opacity: 0.8; }
+    
+        /* Texte de l'énigme révélé */
+        .hint-text { 
+            font-size: 0.88rem; line-height: 1.5; color: #fff; font-weight: 400; 
+            transition: all 0.6s ease;
+        }
+    
+        /* Effet de flou "Mystère" sur les énigmes */
+        .is-blur { 
+            filter: blur(12px); opacity: 0.2; cursor: pointer; user-select: none; 
+            background: linear-gradient(90deg, #fff, var(--pink));
+            -webkit-background-clip: text; background-clip: text;
+        }
+    
+        /* Countdown quand l'énigme est verrouillée */
+        .countdown-label { font-size: 0.55rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: block; }
+        .countdown-small { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: var(--pink); font-weight: 700; }
+    
+        /* 6. POP-UP & ADMIN : Interface utilitaire */
         #mission-popup {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 10, 20, 0.95); backdrop-filter: blur(15px);
+            background: rgba(5, 5, 15, 0.9); backdrop-filter: blur(20px);
             display: none; align-items: center; justify-content: center; z-index: 9999;
         }
         .popup-content {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px; border-radius: 35px; width: 85%; max-width: 400px; text-align: center;
+            background: var(--glass); border: 1px solid var(--glass-border);
+            padding: 40px; border-radius: 35px; width: 85%; max-width: 350px; text-align: center;
         }
         .popup-btn {
-            background: white; color: black; border: none; padding: 18px 35px; border-radius: 50px;
-            font-weight: 700; margin-top: 25px; cursor: pointer; width: 100%; text-transform: uppercase;
+            background: linear-gradient(to right, #fff, #ddd); color: #000; border: none; 
+            padding: 15px 30px; border-radius: 50px; font-weight: 800; margin-top: 20px; 
+            cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 1px;
         }
-
-        /* --- PANNEAU ADMIN --- */
+    
         #admin-panel { 
             position: fixed; bottom: 20px; right: 20px; background: white; padding: 15px; 
             border-radius: 20px; display: none; z-index: 10000; color: #333; width: 220px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
-        .admin-btn { width: 100%; padding: 10px; margin-top: 8px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
-        
+        .admin-btn { width: 100%; padding: 10px; margin-top: 8px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
     </style>
     
 </head>
@@ -189,22 +206,20 @@
 </div>
 
 <script>
-   const MES_ENIGMES = [
-        { date: "2026-07-18", texte: "<b>UNITÉ NALYA-28 : PROTOCOLE ANNIVERSAIRE</b><br>Système en veille pour les prochaines 24 heures. Aucune donnée ne sera interceptée ce soir. Profite de l'instant présent. Fin de transmission." },
-        { date: "2026-07-19", texte: "<b>COORDONNÉES ALPHA :</b> La cible se situe là où la pierre est rouge et où le sang royal a coulé pour donner naissance à une dynastie. Ce n'est pas une capitale, mais elle règne sur le temps une fois par an." },
-        { date: "2026-07-20", texte: "<b>ANALYSE TECHNIQUE :</b> 300 km/h. C'est la barrière que les pionniers ont brisée sur une ligne droite qui porte le nom d'un petit village de la Sarthe. Trouve le nom de cette ligne, et tu trouveras ton premier point de chute." },
-        { date: "2026-07-21", texte: "<b>CRYPTAGE GÉOGRAPHIQUE :</b> Dunlop, Tertre Rouge, Mulsanne, Arnage. Si ces noms ne sont pour toi que des mots, alors tu es encore loin du but. Si tu les relies, le tracé apparaîtra." },
-        { date: "2026-07-22", texte: "<b>ARCHIVES 1906 :</b> C'est ici que le tout premier Grand Prix de l'histoire a eu lieu. Pas à Monaco, pas à Monza. Ici. Le sol garde encore la trace de l'huile et de la légende." },
-        { date: "2026-07-23", texte: "<b>VÉRIFICATION SENSORIELLE :</b> On y vient pour l'endurance, on y reste pour l'ambiance. Ton siège t'attend, mais tu ne seras pas aux commandes. Prépare-toi à subir la physique plutôt qu'à la diriger." },
-        { date: "2026-07-24", texte: "<b>STATUT : IDENTIFICATION PROBABLE.</b><br>La ville est identifiée. Mais ne te réjouis pas trop vite. La destination n'est jamais la finalité du Projet X.28. C'est un écran de fumée." },
-        { date: "2026-07-25", texte: "<b>CONSIGNES OPÉRATIONNELLES - 26 JUILLET :</b><br>• Point de ralliement : Secteur Circuit.<br>• Rôle : Passagère (Baptême de piste).<br>• Dress code : Baskets et fibres techniques.<br>• Objectif : Survivre aux G." },
-        { date: "2026-07-26", texte: "<b>PHASE 1 : VALIDÉE.</b><br>Le Mans est désormais derrière. Le système recalcule les priorités. Repose-toi, les prochaines 48h vont demander des ressources que tu n'as pas encore mobilisées." },
-        { date: "2026-07-27", texte: "<b>ALERTE : DÉTOURNEMENT DE MISSION</b><br>Le Mans n'était qu'un test d'endurance. La véritable cible est ailleurs.<br><br><b>PROTOCOLE DE DÉPART - 28 JUILLET :</b><br>1. Préparer un paquetage pour 48 heures.<br>2. Sélectionner une tenue de catégorie 'Prestige' (Magnifique / Chic).<br>3. Chaussures : Confort de marche impératif.<br>4. <b>Extraction à 06h45 précises.</b><br><br><i>Aucune communication sortante ne sera tolérée jusqu'au franchissement de la zone de sécurité.</i>" },
-        { date: "2026-07-28", texte: "<b>OBJECTIF FINAL : PARIS</b><br>Fin de la diversion. Changement de décor.<br><br><b>Nalya, bienvenue dans la Ville Lumière.</b><br>L'Opération X.28 entre dans sa phase finale." }
-    ];
-
-    const DATE_DEPART_FINALE = "2026-07-28T06:45:00";
-
+    const MES_ENIGMES = [
+    { date: "2026-07-18", texte: "ÉTAT DU SYSTÈME : Une pièce manque à l'appel sur l'échiquier. Mais n'oublie jamais qu'au jeu des 18 ans, les cavaliers se déplacent toujours de manière imprévisible." },
+    { date: "2026-07-19", texte: "SYNCHRONISATION : Le vide se comble à 11h00. Ce n'est pas une arrivée, c'est une réinitialisation. Ouvre l'œil, la réalité va bientôt rattraper tes espérances." },
+    { date: "2026-07-20", texte: "SÉQUENCE 01 : On commence par l'instinct. Tu vas tester une loi physique simple : plus on va vite, plus le reste devient flou. Prépare ton équilibre." },
+    { date: "2026-07-21", texte: "FLUX TENDU : 24 n'est pas qu'un chiffre, c'est une unité de mesure mythique. Un lieu où l'asphalte a une mémoire et où le bruit devient une symphonie." },
+    { date: "2026-07-22", texte: "PARAMÈTRE V : Ce n'est pas toi qui guideras la bête, mais tu ressentiras chaque battement de son moteur. La force G sera ta seule compagne de voyage." },
+    { date: "2026-07-23", texte: "DÉVIATION : Le Mans n'est que la première escale d'un projet plus vaste. On quitte la mécanique pour l'esthétique. Prépare-toi à voir la vie en couleurs." },
+    { date: "2026-07-24", texte: "COORDONNÉES : Pourquoi rester au Nord quand l'horizon semble nous appeler ailleurs ? Le 28, on cherche l'exceptionnel, loin de la routine habituelle." },
+    { date: "2026-07-25", texte: "CONFIRMATION : NALYA identifiée. Demain, le circuit des 24 Heures t'appartient. Un baptême de feu pour marquer ton entrée dans l'âge adulte." },
+    { date: "2026-07-26", texte: "OBJECTIF ATTEINT : Le Mans est coché. Mais le dossier 'PROJET X.28' contient une seconde archive. Elle est plus haute, plus lumineuse, plus secrète." },
+    { date: "2026-07-27", texte: "PRÉPARATION : 06h45. Le départ est imminent. Tenue élégante exigée, chaussures de marche obligatoires. Le luxe n'exclut pas l'effort. Destination verrouillée." },
+    { date: "2026-07-28", texte: "CHARGEMENT FINAL : Oublie la boussole. Aujourd'hui, on ne voyage pas en kilomètres, mais en symboles. L'aventure est là, sous tes yeux. Bienvenue." }
+];
+    const DATE_DEPART_FINALE = "2026-07-28T06:45:00"; // Jour et heure du départ
     let simDate = null;
     let hasNotified = false;
     let adminClicks = 0;
