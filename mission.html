@@ -145,6 +145,12 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
         .admin-btn { width: 100%; padding: 10px; margin-top: 8px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+
+        .highlight {
+            color: var(--pink);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 126, 185, 0.3);
+        }
     </style>
     
 </head>
@@ -183,7 +189,7 @@
         <ul class="protocol-list">
             <li><b>Nalya</b>, ce lien est ton seul guide. Voici les règles de l'opération :</li>
             <li>• <b>Bloque ta journée :</b> Le <b>28 JUILLET</b> t'appartient entièrement. Ne prévois rien d'autre, de l'aube jusqu'au crépuscule.</li>
-            <li>• <b>Un jour, un fragment :</b> À minuit pile, une nouvelle case s'active. Clique sur le flou pour voir l'indice.</li>
+            <li>• <b>Un jour, un fragment :</b> Chaque jour, une nouvelle case s'active. Clique sur le flou pour voir l'indice.</li>
             <li>• <b>Le Dress Code :</b> Prépare une tenue où tu te trouves <b>magnifique</b> (il y aura des photos !), mais attention : tes chaussures doivent être tes meilleures alliées. Le confort est l'unique clé de cette journée.</li>
             <li>• <b>Le Secret :</b> N'essaie pas de deviner. Même le matin du départ, le mystère restera entier. Laisse-toi simplement porter.</li>
             <li style="margin-top: 20px; color: var(--pink); font-size: 0.8rem; text-align: center;"><b>CONSEIL :</b> Ajoute cette page à tes raccourcis pour ne rien manquer.</li>
@@ -200,26 +206,26 @@
 <div id="admin-panel">
     <div onclick="this.parentElement.style.display='none'" style="cursor:pointer; text-align:right; font-weight:bold;">✕</div>
     <p style="font-size: 0.7rem; margin-bottom: 5px;">Simulateur Temporel</p>
-    <input type="date" id="test-date" style="width:100%; padding: 5px; box-sizing: border-box;">
+    <input type="datetime-local" id="test-date" style="width:100%; padding: 5px; box-sizing: border-box;">
     <button class="admin-btn" style="background:var(--accent); color:white;" onclick="setTestDate()">Voyager</button>
     <button class="admin-btn" onclick="localStorage.clear(); location.reload();">Reset Progression</button>
 </div>
 
 <script>
     const MES_ENIGMES = [
-    { date: "2026-07-18", texte: "ÉTAT DU SYSTÈME : Une pièce manque à l'appel sur l'échiquier. Mais n'oublie jamais qu'au jeu des 18 ans, les cavaliers se déplacent toujours de manière imprévisible." },
-    { date: "2026-07-19", texte: "SYNCHRONISATION : Le vide se comble à 11h00. Ce n'est pas une arrivée, c'est une réinitialisation. Ouvre l'œil, la réalité va bientôt rattraper tes espérances." },
-    { date: "2026-07-20", texte: "SÉQUENCE 01 : On commence par l'instinct. Tu vas tester une loi physique simple : plus on va vite, plus le reste devient flou. Prépare ton équilibre." },
-    { date: "2026-07-21", texte: "FLUX TENDU : 24 n'est pas qu'un chiffre, c'est une unité de mesure mythique. Un lieu où l'asphalte a une mémoire et où le bruit devient une symphonie." },
-    { date: "2026-07-22", texte: "PARAMÈTRE V : Ce n'est pas toi qui guideras la bête, mais tu ressentiras chaque battement de son moteur. La force G sera ta seule compagne de voyage." },
-    { date: "2026-07-23", texte: "DÉVIATION : Le Mans n'est que la première escale d'un projet plus vaste. On quitte la mécanique pour l'esthétique. Prépare-toi à voir la vie en couleurs." },
-    { date: "2026-07-24", texte: "COORDONNÉES : Pourquoi rester au Nord quand l'horizon semble nous appeler ailleurs ? Le 28, on cherche l'exceptionnel, loin de la routine habituelle." },
-    { date: "2026-07-25", texte: "CONFIRMATION : NALYA identifiée. Demain, le circuit des 24 Heures t'appartient. Un baptême de feu pour marquer ton entrée dans l'âge adulte." },
-    { date: "2026-07-26", texte: "OBJECTIF ATTEINT : Le Mans est coché. Mais le dossier 'PROJET X.28' contient une seconde archive. Elle est plus haute, plus lumineuse, plus secrète." },
-    { date: "2026-07-27", texte: "PRÉPARATION : 06h45. Le départ est imminent. Tenue élégante exigée, chaussures de marche obligatoires. Le luxe n'exclut pas l'effort. Destination verrouillée." },
-    { date: "2026-07-28", texte: "CHARGEMENT FINAL : Oublie la boussole. Aujourd'hui, on ne voyage pas en kilomètres, mais en symboles. L'aventure est là, sous tes yeux. Bienvenue." }
+    { date: "2026-07-18T19:00:00", texte: "On peut remplir un vide avant même qu'il ne soit creusé. Ne regarde pas là où je suis, mais là où <span class='highlight'>je ne suis plus</span>." },
+    { date: "2026-07-19T08:30:00", texte: "Le décompte s'arrête là où la trajectoire finit. Ce n'est pas une arrivée, c'est une <span class='highlight'>évidence</span> qui reprend sa place. Rendez-vous à 11h avec ta première surprise." },
+    { date: "2026-07-20T10:00:00", texte: "L'intensité ne se mesure pas en kilomètres, mais dans la capacité du <span class='highlight'>cœur</span> à suivre le rythme de ce qui l'entoure." },
+    { date: "2026-07-21T10:00:00", texte: "Le silence est l'annonce du tonnerre. Prépare-toi à déléguer tes sens à <span class='highlight'>quelqu'un dont c'est le métier</span>." },
+    { date: "2026-07-22T10:00:00", texte: "Prépare ton esprit à ne <span class='highlight'>plus rien contrôler</span>. La force qui arrive ne se discute pas, elle se subit." },
+    { date: "2026-07-23T10:00:00", texte: "Le vrai voyage commence quand on accepte de <span class='highlight'>perdre ses repères</span>. Ce que tu cherches n'est pas sur ta route habituelle." },
+    { date: "2026-07-24T10:00:00", texte: "Pourquoi viser le sommet quand on peut <span class='highlight'>viser l'éclat</span> ? Le 28, la boussole ne servira qu'à nous perdre un peu plus." },
+    { date: "2026-07-25T18:00:00", texte: "Demain, le <span class='highlight'>bitume parle</span>. Écoute-le bien, mais ne crois pas qu'il détient la clé de toute l'histoire." },
+    { date: "2026-07-26T21:00:00", texte: "Le bruit s'arrête, mais l'écho nous emmène ailleurs. Ce que tu as vu n'était que le <span class='highlight'>reflet du projet réel</span>." },
+    { date: "2026-07-27T10:00:00", texte: "Prépare ton plus beau sourire et ta tenue de fête, mais sois prête pour un <span class='highlight'>long voyage</span>. Le départ est fixé à 06h45. Nous allons rouler des heures durant vers un horizon que tu ne soupçonnes pas, là où la beauté du décor n'aura d'égale que la tienne." },
+    { date: "2026-07-28T07:00:00", texte: "La route est devant nous, immense et chargée de secrets. On ne parcourt pas autant de distance pour rien : au bout de ce voyage se cache le <span class='highlight'>joyau de tes 18 ans</span>. Ne sois pas impatiente, chaque kilomètre nous rapproche de ce moment <span class='highlight'>'Woah'</span> que nous avons préparé pour toi. Profite du trajet, car là où nous allons, le temps n'aura plus d'importance." }
 ];
-    const DATE_DEPART_FINALE = "2026-07-28T06:45:00"; // Jour et heure du départ
+const DATE_DEPART_FINALE = "2026-07-28T06:45:00"; // Jour et heure du départ
     let simDate = null;
     let hasNotified = false;
     let adminClicks = 0;
@@ -241,7 +247,8 @@
         if(!list) return;
         list.innerHTML = "";
         MES_ENIGMES.forEach((e, i) => {
-            const d = new Date(e.date + "T00:00:00");
+            // Modifié pour lire la date et l'heure de l'objet
+            const d = new Date(e.date); 
             list.innerHTML += `
                 <div class="hint-card" id="card-${i}">
                     <div class="date-badge">
@@ -263,7 +270,8 @@
         let unlockedCount = 0;
 
         MES_ENIGMES.forEach((e, i) => {
-            const dateCible = new Date(e.date + "T00:00:00");
+            // Modifié pour respecter l'heure précise définie dans MES_ENIGMES
+            const dateCible = new Date(e.date);
             const cont = document.getElementById(`content-${i}`);
             if(!cont) return;
 
@@ -327,7 +335,8 @@
     function setTestDate() { 
         const v = document.getElementById('test-date').value;
         if(v) { 
-            simDate = new Date(v + "T00:00:01"); 
+            // Modifié pour accepter l'heure du simulateur (v est déjà formaté par datetime-local)
+            simDate = new Date(v); 
             hasNotified = false;
             updateUI(); 
         }
