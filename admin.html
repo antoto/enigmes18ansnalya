@@ -3,72 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SST - CONSOLE COMMANDANT</title>
+    <title>ETHAN COMMAND</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        body { background: #050510; color: white; font-family: 'Segoe UI', sans-serif; padding: 20px; }
-        h2 { color: #ff7eb9; text-transform: uppercase; font-size: 1rem; letter-spacing: 2px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .btn { border: none; border-radius: 8px; color: white; padding: 15px 5px; font-weight: bold; font-size: 0.8rem; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-        
-        /* Couleurs par type */
-        .story { background: #6a11cb; } /* Narration */
-        .enigma { background: #ff7eb9; } /* Enigmes */
-        .search { background: #ff9f43; } /* Fouille / Action */
-        .warn { background: #ee5253; }   /* Alertes / Humour */
-        .btn:active { transform: scale(0.95); opacity: 0.8; }
-        
-        .panel { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
-        .desc { font-size: 0.7rem; color: #888; margin-bottom: 8px; display: block; }
+        body { background: #050510; color: white; font-family: sans-serif; padding: 15px; }
+        .section { background: rgba(255,255,255,0.05); border: 1px solid #333; padding: 10px; border-radius: 10px; margin-bottom: 20px; }
+        .time-label { color: #ff7eb9; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 10px; }
+        .btn { width: 100%; padding: 15px; margin-bottom: 10px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; text-align: left; font-size: 0.85rem; }
+        .start { background: #6a11cb; } .enigma { background: #341f97; } .final { background: #b33939; }
     </style>
 </head>
 <body>
+    <h3 style="text-align:center; color:#ff7eb9;">CONTRÔLEUR DE MISSION</h3>
 
-    <h2>📡 TRANSMISSIONS SCÉNARIO</h2>
-    <div class="grid">
-        <button class="btn story" onclick="send('SYSTÈME', 'Liaison satellite établie. Agent Nalya, votre progression est désormais sous surveillance.')">Départ</button>
-        <button class="btn story" onclick="send('SÉCURITÉ', 'Nous quittons la zone de confort. Le protocole Nalya-18 est activé. Ne faites confiance à personne.')">Sortie Normandie</button>
-        <button class="btn story" onclick="send('INFOS', 'Analyse du secteur en cours... Plusieurs signaux non identifiés détectés à Poissy.')">Info Secteur</button>
-        <button class="btn story" onclick="send('FINAL', 'Objectif en vue. Initialisation de la séquence de fin de mission.')">Arrivée proche</button>
+    <div class="section">
+        <span class="time-label">0% - Départ</span>
+        <button class="btn start" onclick="send('ACTIVATION', 'Agent Nalya, la mission Nalya-18 commence maintenant. Ne posez aucune question. Votre progression est tracée.')">Lancer Mission</button>
     </div>
 
-    <h2>🧩 ÉNIGMES & LOGIQUE</h2>
-    <div class="grid">
-        <button class="btn enigma" onclick="send('LOGIQUE', 'Je suis grand quand je suis jeune et petit quand je suis vieux. Je brille pour t\'aider, mais le vent est mon ennemi. Qui suis-je ?<br><br><i>(Réponse : Une bougie)</i>')">Énigme Bougie</button>
-        <button class="btn enigma" onclick="send('DÉCRYPTAGE', 'Trouve l\'intrus parmi ces villes :<br>Paris, Londres, Berlin, Tokyo, Rome.<br><br><i>(Réponse : Tokyo, pas en Europe)</i>')">Énigme Villes</button>
-        <button class="btn enigma" onclick="send('CALCUL', 'Si tu me divises par deux, je ne suis rien. Si tu me couches, je suis tout. Qui suis-je ?<br><br><i>(Réponse : Le chiffre 8)</i>')">Énigme Chiffre</button>
-        <button class="btn enigma" onclick="send('OBSERVATION', 'Regarde par la fenêtre. Compte 5 voitures rouges. Une fois fait, demande ton indice à Ethan.')">Défi Visuel</button>
+    <div class="section">
+        <span class="time-label">25% - Normandie (En route)</span>
+        <button class="btn enigma" onclick="send('INDICE 1', 'Le lieu secret possède un lien avec l\'année 1937 et la technologie de l\'époque. Analyse en cours...')">Indice 1937 (Flou)</button>
+        <button class="btn enigma" onclick="send('LOGIQUE', 'Je peux être de sang, de fer ou de passage. On me traverse sans jamais me toucher. Qui suis-je ?<br><br><i>(Un Pont)</i>')">Énigme du Pont</button>
     </div>
 
-    <h2>🔍 FOUILLE & ACTIONS</h2>
-    <div class="grid">
-        <button class="btn search" onclick="send('SCAN', 'Un objet étranger a été détecté dans le vide-poche latéral gauche. Inspectez immédiatement.')">Fouille Porte</button>
-        <button class="btn search" onclick="send('SCAN', 'Nos capteurs indiquent un message caché sous ton siège. Récupère-le discrètement.')">Sous le siège</button>
-        <button class="btn search" onclick="send('ACTION', 'L\'agent Ethan possède une information cruciale. Pour l\'obtenir, tu dois lui donner un mot de passe secret.')">Info Ethan</button>
+    <div class="section">
+        <span class="time-label">50% - Mi-parcours</span>
+        <button class="btn enigma" onclick="send('ALERTE', 'Brouillage radar détecté. La destination est une ville où un célèbre Roi est né. Mais lequel ?')">Indice Roi (Piège)</button>
+        <button class="btn enigma" onclick="send('FOUILLE', 'Anomalie détectée dans le cockpit. Inspecte l\'intérieur de ta chaussure droite ou du vide-poche.')">Action Fouille</button>
     </div>
 
-    <h2>⚠️ ALERTES & FUN</h2>
-    <div class="grid">
-        <button class="btn warn" onclick="send('ALERTE', 'Tentative de piratage détectée ! Nalya, lâche ton téléphone personnel immédiatement !')">Anti-Triche</button>
-        <button class="btn warn" onclick="send('URGENT', 'Besoin de carburant humain détecté. Prochain arrêt autorisé uniquement si l\'énigme suivante est résolue.')">Pause Faim</button>
+    <div class="section">
+        <span class="time-label">75% - Approche (Suspense)</span>
+        <button class="btn enigma" onclick="send('SÉCURITÉ', 'Attention, nous entrons dans une zone de haute surveillance. La destination n\'est PLUS Paris. Le plan a changé.')">Fausse Alerte Changement</button>
+        <button class="btn enigma" onclick="send('INDICE FINAL', 'Ta destination rime avec \"Choisy\", mais ce n\'est pas Choisy. C\'est un lieu d\'Histoire.')">Rime en "SY"</button>
+    </div>
+
+    <div class="section">
+        <span class="time-label">95% - Arrivée</span>
+        <button class="btn final" onclick="send('OBJECTIF GÉO', 'Localisation terminée. Tu es arrivée au complexe Poissy. Fin de transmission.')">Message Final</button>
     </div>
 
     <script>
-        // CONFIGURATION
         firebase.initializeApp({ databaseURL: "https://missionnalya-default-rtdb.firebaseio.com/" });
         const db = firebase.database();
-
-        function send(t, h) {
-            db.ref('currentMission').set({
-                title: t,
-                html: h,
-                active: true,
-                timestamp: Date.now() // Pour forcer la mise à jour
-            });
-            // Petit feedback sur le bouton
-            console.log("Envoyé : " + t);
-        }
+        function send(t, h) { db.ref('currentMission').set({ title: t, html: h, active: true }); }
     </script>
 </body>
 </html>
