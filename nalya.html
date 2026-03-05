@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SST - MISSION CONTROL</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Poppins:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+    <style>
+        :root {
+            --accent: #6a11cb;
+            --pink: #ff7eb9;
+            --bg: #0f0c29;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            height: 100vh;
+            color: white;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #map {
+            flex: 1;
+            width: 100%;
+            pointer-events: none;
+            filter: brightness(0.3) saturate(1.8) contrast(1.2) hue-rotate(225deg);
+        }
+
+        /* Point GPS Balise */
+        .car-marker {
+            width: 24px;
+            height: 24px;
+            background: var(--pink);
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 40px 10px var(--pink);
+            position: relative;
+        }
+
+        .car-marker::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--pink);
+            animation: pulse 2.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(3.5);
+                opacity: 0;
+            }
+        }
+
+        /* Header & Footer UI */
+        .ui-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 40px 20px;
+            background: linear-gradient(to bottom, var(--bg) 20%, transparent);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border: 1px solid var(--pink);
+            border-radius: 50px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.6rem;
+            color: var(--pink);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(255, 126, 185, 0.1);
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin: 0;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .ui-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 30px;
+            background: linear-gradient(to top, var(--bg) 30%, transparent);
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 25px;
+            backdrop-filter: blur(20px);
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.7rem;
+            color: var(--pink);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .progress-track {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--pink));
+            box-shadow: 0 0 20px var(--pink);
+            transition: width 1s ease-in-out;
+        }
+
+        /* Pop-up Énigme */
+        #mission-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 15, 0.95);
+            backdrop-filter: blur(25px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .popup-box {
+            background: var(--glass);
+            border: 1px solid var(--pink);
+            padding: 40px;
+            border-radius: 35px;
+            width: 85%;
+            max-width: 450px;
+            text-align: center;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ui-header">
+        <div class="badge">Liaison Satellite Active</div>
+        <h1>Mission : Nalya-18</h1>
+    </div>
+
+    <div id="map"></div>
+
+    <div id="mission-popup">
+        <div class="popup-box">
+            <h2 id="pop-title" style="color:var(--pink); text-transform:uppercase;">Transmission</h2>
+            <div id="pop-content"></div>
+            <div style="font-family:'Fira Code'; font-size:0.6rem; color:var(--pink); margin-top:30px; opacity:0.5;">
+                CRITICAL_INFO_DECRYPTED</div>
+        </div>
+    </div>
+
+    <div class="ui-footer">
+        <div class="glass-card">
+            <div class="stats-row">
+                <span>Vitesse: <span id="speed">0</span> KM/H</span>
+                <span id="next-label">Analyse du secteur...</span>
+            </div>
+            <div class="progress-track">
+                <div id="bar" class="progress-fill"></div>
+            </div>
+            <div class="stats-row" style="margin-top:12px; margin-bottom:0; font-weight:700;">
+                <span>Progression Mission</span>
+                <span id="percent">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = { databaseURL: "https://missionnalya-default-rtdb.firebaseio.com/" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Init Carte
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([49.528, 0.721], 16);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+        const marker = L.marker([49.528, 0.721], { icon: L.divIcon({ className: 'c', html: "<div class='car-marker'></div>", iconSize: [24, 24], iconAnchor: [12, 12] }) }).addTo(map);
+
+        // Ecoute Ethan
+        db.ref('currentMission').on('value', (s) => {
+            const d = s.val();
+            if (d && d.active) {
+                document.getElementById('pop-title').innerText = d.title;
+                document.getElementById('pop-content').innerHTML = d.html;
+                document.getElementById('mission-popup').style.display = 'flex';
+                setTimeout(() => { document.getElementById('mission-popup').style.display = 'none'; }, 15000);
+            }
+        });
+
+        function update(pos) {
+            const { latitude: lat, longitude: lng, speed } = pos.coords;
+            marker.setLatLng([lat, lng]); map.setView([lat, lng], 16);
+            document.getElementById('speed').innerText = speed ? (speed * 3.6).toFixed(0) : 0;
+
+            // Progression basée sur tes 135km réels (Rives-en-Seine -> Poissy)
+            const start = { lat: 49.528, lng: 0.721 };
+            const R = 6371;
+            const dLat = (lat - start.lat) * Math.PI / 180; const dLon = (lng - start.lng) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) ** 2 + Math.cos(start.lat * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+            const dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            let p = Math.min((dist / 135) * 100, 100);
+            document.getElementById('bar').style.width = p + "%";
+            document.getElementById('percent').innerText = Math.floor(p) + "%";
+        }
+        navigator.geolocation.watchPosition(update, null, { enableHighAccuracy: true });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #0f0c29;
+            color: white;
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .msg {
+            background: #6a11cb;
+        }
+
+        .enigma {
+            background: #ff7eb9;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>COMMANDANT ETHAN</h2>
+    <button class="btn msg"
+        onclick="send('INFO', '<p>Début de la phase d\'approche. Reste concentrée Nalya.</p>')">Message
+        Bienvenue</button>
+    <button class="btn enigma" onclick="send('ÉNIGME 1', '<p style=\'font-style:italic\'>\" Je n\'ai pas d\'ailes, mais
+        je survole Paris...\"</p><img src=\'ton-image.jpg\' style=\'width:100%; border-radius:10px;\'>')">Envoyer Énigme
+        1</button>
+    <button class="btn enigma" onclick="send('INDICE', '<p>Regarde dans la boîte à gants...</p>')">Envoyer
+        Indice</button>
+    <button class="btn msg" onclick="send('ALERTE', '<h1>DESTINATION PROCHE</h1>')">Alerte Arrivée</button>
+
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script>
+        firebase.initializeApp({ databaseURL: "https://missionnalya-default-rtdb.firebaseio.com/" });
+        const db = firebase.database();
+        function send(t, h) { db.ref('currentMission').set({ title: t, html: h, active: true }); setTimeout(() => db.ref('currentMission').update({ active: false }), 2000); }
+    </script>
+</body>
+
+</html>
