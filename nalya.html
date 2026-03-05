@@ -1,157 +1,31 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SST - MISSION DASHBOARD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <style>
-        :root { --accent: #6a11cb; --pink: #ff7eb9; --bg: #050510; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); }
-        body { font-family: 'Fira Code', monospace; background: var(--bg); margin: 0; height: 100vh; color: white; overflow: hidden; display: flex; flex-direction: column; }
-
-        /* Arrière plan technologique */
-        .grid-bg { position: fixed; width: 200%; height: 200%; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 50px 50px; transform: perspective(500px) rotateX(60deg); top: -50%; left: -50%; z-index: 0; opacity: 0.3; }
-
-        .main-container { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100%; padding: 20px; box-sizing: border-box; }
-
-        /* Header */
-        .header { text-align: center; padding: 20px; }
-        .badge { border: 1px solid var(--pink); color: var(--pink); padding: 5px 15px; border-radius: 50px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
-
-        /* Radar Central */
-        .radar-zone { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-        .radar-circle { width: 280px; height: 280px; border: 2px solid var(--border); border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 50px rgba(106, 17, 203, 0.2); }
-        .radar-scanner { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from 0deg, transparent, rgba(255, 126, 185, 0.2)); animation: scan 4s linear infinite; }
-        .car-dot { width: 15px; height: 15px; background: var(--pink); border-radius: 50%; box-shadow: 0 0 20px var(--pink); position: relative; z-index: 5; }
-        .car-dot::after { content:''; position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 1px solid var(--pink); animation: pulse 2s infinite; left: 0; }
-
-        /* Stats Blocks */
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--glass); border: 1px solid var(--border); padding: 15px; border-radius: 15px; backdrop-filter: blur(10px); }
-        .stat-label { font-size: 0.6rem; color: #888; text-transform: uppercase; }
-        .stat-value { font-size: 1.4rem; font-weight: bold; color: var(--pink); }
-
-        /* Barre de progression basse */
-        .footer { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 20px; backdrop-filter: blur(10px); }
-        .progress-container { height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--pink)); box-shadow: 0 0 15px var(--pink); transition: width 1s ease; }
-
-        /* Pop-up Overlay */
-        #popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,15,0.98); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 30px; box-sizing: border-box; }
-        .popup-box { border: 2px solid var(--pink); padding: 40px; border-radius: 30px; text-align: center; max-width: 500px; background: radial-gradient(circle, #1a0b2e 0%, #050510 100%); }
-        .popup-title { font-family: 'Poppins'; font-weight: 900; color: var(--pink); text-transform: uppercase; font-size: 1.8rem; margin-bottom: 20px; }
+<div id="popup">
+    <div class="popup-box">
+        <div class="popup-title" id="pop-title">INCOMING DATA</div>
+        <div id="pop-content" style="font-size: 1.1rem; line-height: 1.5; margin-bottom: 25px;"></div>
         
-        @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(4); opacity: 0; } }
-    </style>
-</head>
-<body>
-    <div class="grid-bg"></div>
+        <button onclick="closePopup()" style="background: transparent; border: 1px solid var(--pink); color: var(--pink); padding: 12px 30px; border-radius: 10px; font-family: 'Fira Code'; cursor: pointer; text-transform: uppercase; letter-spacing: 2px;">
+            Confirmer la réception
+        </button>
+
+        <div style="margin-top: 25px; font-size: 0.5rem; color: var(--pink); opacity: 0.5;">SST_SECURE_CHANNEL_v4.2</div>
+    </div>
+</div>
+
+<script>
+    // Ajoute cette fonction dans ta balise <script>
+    function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+        // Optionnel : on prévient la base de données que c'est fermé
+        db.ref('currentMission').update({ active: false });
+    }
     
-    <div class="main-container">
-        <div class="header">
-            <span class="badge">System Status: Active</span>
-            <h1 style="font-family: 'Poppins'; margin-top: 15px; font-size: 1.2rem; letter-spacing: 2px;">NALYA MISSION INTERFACE</h1>
-        </div>
-
-        <div class="radar-zone">
-            <div class="radar-circle">
-                <div class="radar-scanner"></div>
-                <div class="car-dot"></div>
-                <div style="position: absolute; bottom: -40px; font-size: 0.6rem; color: var(--pink); letter-spacing: 2px;">SCANNING COORDINATES...</div>
-            </div>
-        </div>
-
-        <div class="data-grid">
-            <div class="stat-card">
-                <div class="stat-label">Velocity (KPH)</div>
-                <div class="stat-value" id="speed">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Mission Time</div>
-                <div class="stat-value" id="timer">00:00:00</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Latitude</div>
-                <div class="stat-value" id="lat" style="font-size: 0.9rem;">--.----</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Longitude</div>
-                <div class="stat-value" id="lng" style="font-size: 0.9rem;">--.----</div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <div style="display: flex; justify-content: space-between; font-size: 0.7rem;">
-                <span>PROGRESSION GLOBALE</span>
-                <span id="percent">0%</span>
-            </div>
-            <div class="progress-container">
-                <div id="bar" class="progress-bar"></div>
-            </div>
-            <div style="text-align: center; font-size: 0.5rem; color: #555; letter-spacing: 5px;">DECRYPTING DESTINATION...</div>
-        </div>
-    </div>
-
-    <div id="popup">
-        <div class="popup-box">
-            <div class="popup-title" id="pop-title">INCOMING DATA</div>
-            <div id="pop-content" style="font-size: 1.2rem; line-height: 1.6;"></div>
-            <div style="margin-top: 30px; font-size: 0.6rem; color: var(--pink); border-top: 1px solid var(--border); padding-top: 20px;">SECURITY CLEARANCE: LEVEL 5</div>
-        </div>
-    </div>
-
-    <script>
-        const firebaseConfig = { databaseURL: "https://missionnalya-default-rtdb.firebaseio.com/" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        // Timer de mission
-        let seconds = 0;
-        setInterval(() => {
-            seconds++;
-            let h = Math.floor(seconds / 3600);
-            let m = Math.floor((seconds % 3600) / 60);
-            let s = seconds % 60;
-            document.getElementById('timer').innerText = [h, m, s].map(v => v < 10 ? "0" + v : v).join(":");
-        }, 1000);
-
-        // Ecoute Ethan
-        db.ref('currentMission').on('value', (s) => {
-            const d = s.val();
-            if(d && d.active) {
-                document.getElementById('pop-title').innerText = d.title;
-                document.getElementById('pop-content').innerHTML = d.html;
-                document.getElementById('popup').style.display = 'flex';
-                setTimeout(() => { document.getElementById('popup').style.display = 'none'; }, 20000);
-            }
-        });
-
-        // GPS & Barre de progression
-        const startPos = { lat: 49.528, lng: 0.721 };
-        function update(pos) {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-            const speed = pos.coords.speed ? (pos.coords.speed * 3.6).toFixed(0) : 0;
-
-            document.getElementById('speed').innerText = speed;
-            document.getElementById('lat').innerText = lat.toFixed(4);
-            document.getElementById('lng').innerText = lng.toFixed(4);
-
-            // Distance parcourue vs 135km total
-            const R = 6371;
-            const dLat = (lat-startPos.lat)*Math.PI/180;
-            const dLon = (lng-startPos.lng)*Math.PI/180;
-            const a = Math.sin(dLat/2)**2 + Math.cos(startPos.lat*Math.PI/180)*Math.cos(lat*Math.PI/180)*Math.sin(dLon/2)**2;
-            const dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            
-            let p = Math.min((dist / 135) * 100, 100);
-            document.getElementById('bar').style.width = p + "%";
-            document.getElementById('percent').innerText = Math.floor(p) + "%";
+    // Modifie aussi l'écouteur Firebase pour ne pas fermer automatiquement trop vite
+    db.ref('currentMission').on('value', (s) => {
+        const d = s.val();
+        if(d && d.active) {
+            document.getElementById('pop-title').innerText = d.title;
+            document.getElementById('pop-content').innerHTML = d.html;
+            document.getElementById('popup').style.display = 'flex';
         }
-        navigator.geolocation.watchPosition(update, null, { enableHighAccuracy: true });
-    </script>
-</body>
-</html>
+    });
+</script>
