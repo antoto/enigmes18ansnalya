@@ -1,4 +1,101 @@
-<div id="popup">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SST - MISSION DASHBOARD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <style>
+        :root { --accent: #6a11cb; --pink: #ff7eb9; --bg: #050510; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.1); }
+        body { font-family: 'Fira Code', monospace; background: var(--bg); margin: 0; height: 100vh; color: white; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* Arrière plan technologique */
+        .grid-bg { position: fixed; width: 200%; height: 200%; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 50px 50px; transform: perspective(500px) rotateX(60deg); top: -50%; left: -50%; z-index: 0; opacity: 0.3; }
+
+        .main-container { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100%; padding: 20px; box-sizing: border-box; }
+
+        /* Header */
+        .header { text-align: center; padding: 20px; }
+        .badge { border: 1px solid var(--pink); color: var(--pink); padding: 5px 15px; border-radius: 50px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
+
+        /* Radar Central */
+        .radar-zone { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        .radar-circle { width: 280px; height: 280px; border: 2px solid var(--border); border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 50px rgba(106, 17, 203, 0.2); }
+        .radar-scanner { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from 0deg, transparent, rgba(255, 126, 185, 0.2)); animation: scan 4s linear infinite; }
+        .car-dot { width: 15px; height: 15px; background: var(--pink); border-radius: 50%; box-shadow: 0 0 20px var(--pink); position: relative; z-index: 5; }
+        .car-dot::after { content:''; position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 1px solid var(--pink); animation: pulse 2s infinite; left: 0; }
+
+        /* Stats Blocks */
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: var(--glass); border: 1px solid var(--border); padding: 15px; border-radius: 15px; backdrop-filter: blur(10px); }
+        .stat-label { font-size: 0.6rem; color: #888; text-transform: uppercase; }
+        .stat-value { font-size: 1.4rem; font-weight: bold; color: var(--pink); }
+
+        /* Barre de progression basse */
+        .footer { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 20px; backdrop-filter: blur(10px); }
+        .progress-container { height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--pink)); box-shadow: 0 0 15px var(--pink); transition: width 1s ease; }
+
+        /* Pop-up Overlay */
+        #popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,15,0.98); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 30px; box-sizing: border-box; }
+        .popup-box { border: 2px solid var(--pink); padding: 40px; border-radius: 30px; text-align: center; max-width: 500px; background: radial-gradient(circle, #1a0b2e 0%, #050510 100%); }
+        .popup-title { font-family: 'Poppins'; font-weight: 900; color: var(--pink); text-transform: uppercase; font-size: 1.8rem; margin-bottom: 20px; }
+        
+        @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(4); opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <div class="main-container">
+        <div class="header">
+            <span class="badge">System Status: Active</span>
+            <h1 style="font-family: 'Poppins'; margin-top: 15px; font-size: 1.2rem; letter-spacing: 2px;">NALYA MISSION INTERFACE</h1>
+        </div>
+
+        <div class="radar-zone">
+            <div class="radar-circle">
+                <div class="radar-scanner"></div>
+                <div class="car-dot"></div>
+                <div style="position: absolute; bottom: -40px; font-size: 0.6rem; color: var(--pink); letter-spacing: 2px;">SCANNING COORDINATES...</div>
+            </div>
+        </div>
+
+        <div class="data-grid">
+            <div class="stat-card">
+                <div class="stat-label">Velocity (KPH)</div>
+                <div class="stat-value" id="speed">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Mission Time</div>
+                <div class="stat-value" id="timer">00:00:00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Latitude</div>
+                <div class="stat-value" id="lat" style="font-size: 0.9rem;">--.----</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Longitude</div>
+                <div class="stat-value" id="lng" style="font-size: 0.9rem;">--.----</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem;">
+                <span>PROGRESSION GLOBALE</span>
+                <span id="percent">0%</span>
+            </div>
+            <div class="progress-container">
+                <div id="bar" class="progress-bar"></div>
+            </div>
+            <div style="text-align: center; font-size: 0.5rem; color: #555; letter-spacing: 5px;">DECRYPTING DESTINATION...</div>
+        </div>
+    </div>
+
+    <div id="popup">
     <div class="popup-box">
         <div class="popup-title" id="pop-title">INCOMING DATA</div>
         <div id="pop-content" style="font-size: 1.1rem; line-height: 1.5; margin-bottom: 25px;"></div>
@@ -29,3 +126,5 @@
         }
     });
 </script>
+</body>
+</html>
