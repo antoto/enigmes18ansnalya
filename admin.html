@@ -1,54 +1,39 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETHAN COMMAND</title>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        body { background: #050510; color: white; font-family: sans-serif; padding: 15px; }
-        .section { background: rgba(255,255,255,0.05); border: 1px solid #333; padding: 10px; border-radius: 10px; margin-bottom: 20px; }
-        .time-label { color: #ff7eb9; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 10px; }
-        .btn { width: 100%; padding: 15px; margin-bottom: 10px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; text-align: left; font-size: 0.85rem; }
-        .start { background: #6a11cb; } .enigma { background: #341f97; } .final { background: #b33939; }
+        body { background: #050510; color: white; font-family: sans-serif; padding: 20px; }
+        .btn { width: 100%; padding: 18px; margin-bottom: 12px; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+        .step { color: #888; font-size: 0.7rem; margin-bottom: 5px; display: block; }
+        .blue { background: #4834d4; }
+        .pink { background: #be2edd; }
+        .red { background: #eb4d4b; box-shadow: 0 0 15px #eb4d4b; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
-    <h3 style="text-align:center; color:#ff7eb9;">CONTRÔLEUR DE MISSION</h3>
+    <h3 style="text-align:center;">COMMANDANT ETHAN</h3>
 
-    <div class="section">
-        <span class="time-label">0% - Départ</span>
-        <button class="btn start" onclick="send('ACTIVATION', 'Agent Nalya, la mission Nalya-18 commence maintenant. Ne posez aucune question. Votre progression est tracée.')">Lancer Mission</button>
-    </div>
+    <span class="step">DÉBUT DE TRAJET</span>
+    <button class="btn blue" onclick="send('SYSTÈME', 'Liaison établie. Agent Nalya, la mission commence.', false)">Lancer la mission</button>
 
-    <div class="section">
-        <span class="time-label">25% - Normandie (En route)</span>
-        <button class="btn enigma" onclick="send('INDICE 1', 'Le lieu secret possède un lien avec l\'année 1937 et la technologie de l\'époque. Analyse en cours...')">Indice 1937 (Flou)</button>
-        <button class="btn enigma" onclick="send('LOGIQUE', 'Je peux être de sang, de fer ou de passage. On me traverse sans jamais me toucher. Qui suis-je ?<br><br><i>(Un Pont)</i>')">Énigme du Pont</button>
-    </div>
+    <span class="step">MILIEU DE TRAJET (Doutes)</span>
+    <button class="btn pink" onclick="send('INDICE', 'Le lieu que nous visons est lié à Saint Louis. Analyse en cours...', false)">Indice Saint Louis</button>
+    <button class="btn pink" onclick="send('ALERTE', 'Brouillage détecté. Nous changeons de direction. Ne regarde pas la route.', false)">Fausse Alerte Direction</button>
 
-    <div class="section">
-        <span class="time-label">50% - Mi-parcours</span>
-        <button class="btn enigma" onclick="send('ALERTE', 'Brouillage radar détecté. La destination est une ville où un célèbre Roi est né. Mais lequel ?')">Indice Roi (Piège)</button>
-        <button class="btn enigma" onclick="send('FOUILLE', 'Anomalie détectée dans le cockpit. Inspecte l\'intérieur de ta chaussure droite ou du vide-poche.')">Action Fouille</button>
-    </div>
+    <span class="step">10 MIN AVANT POISSY (Le clou du spectacle)</span>
+    <button class="btn red" onclick="send('INTERCEPTION', '<h1 style=\'color:red\'>ALERTE ROUGE</h1><p>Nous sommes repérés. Le radar passe en mode haute fréquence. Destination finale identifiée : POISSY.</p>', true)">⚠️ ACTIVER MODE INTERCEPTION</button>
 
-    <div class="section">
-        <span class="time-label">75% - Approche (Suspense)</span>
-        <button class="btn enigma" onclick="send('SÉCURITÉ', 'Attention, nous entrons dans une zone de haute surveillance. La destination n\'est PLUS Paris. Le plan a changé.')">Fausse Alerte Changement</button>
-        <button class="btn enigma" onclick="send('INDICE FINAL', 'Ta destination rime avec \"Choisy\", mais ce n\'est pas Choisy. C\'est un lieu d\'Histoire.')">Rime en "SY"</button>
-    </div>
-
-    <div class="section">
-        <span class="time-label">95% - Arrivée</span>
-        <button class="btn final" onclick="send('OBJECTIF GÉO', 'Localisation terminée. Tu es arrivée au complexe Poissy. Fin de transmission.')">Message Final</button>
-    </div>
-
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <script>
         firebase.initializeApp({ databaseURL: "https://missionnalya-default-rtdb.firebaseio.com/" });
         const db = firebase.database();
-        function send(t, h) { db.ref('currentMission').set({ title: t, html: h, active: true }); }
+        function send(t, h, isFinal) {
+            db.ref('currentMission').set({ title: t, html: h, active: true, isFinal: isFinal });
+        }
     </script>
 </body>
 </html>
