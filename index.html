@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nalya 18 🎀">
+
+  <link rel="apple-touch-icon" href="iconeenigmes.png?v=12">
+  <link rel="icon" type="image/png" href="iconeenigmes.png?v=12">
+
+  <title>Nalya — L'Opération Secrète</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff7eb9;
+    --purple: #764ba2;
+    --dark: #2d3436;
+    --white: #ffffff;
+    --gradient: linear-gradient(135deg, #ff7eb9 0%, #764ba2 100%);
+    --glass: rgba(255,255,255,0.07);
+    --glass-border: rgba(255,255,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #0e0812;
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(255,126,185,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 80%, rgba(118,75,162,0.22) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 60% 30%, rgba(255,126,185,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 60px 0 40px;
+    animation: fadeDown 1s ease both;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--pink);
+    margin-bottom: 24px;
+    backdrop-filter: blur(10px);
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 8vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ── PHOTO ── */
+  .photo-section {
+    animation: fadeUp 1s ease 0.2s both;
+    margin: 32px 0;
+  }
+
+  .photo-frame {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,126,185,0.1);
+  }
+
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .photo-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(14,8,18,0.6) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .photo-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 2;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+  }
+
+  /* ── INTRO ── */
+  .intro-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(20px);
+    margin: 28px 0;
+    animation: fadeUp 1s ease 0.35s both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .intro-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gradient);
+  }
+
+  .intro-card p {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.85);
+    font-style: italic;
+  }
+
+  .intro-card p + p { margin-top: 14px; }
+
+  /* ── MISSION ── */
+  .mission-card {
+    background: linear-gradient(135deg, rgba(255,126,185,0.1), rgba(118,75,162,0.1));
+    border: 1px solid rgba(255,126,185,0.25);
+    border-radius: 20px;
+    padding: 28px 32px;
+    margin: 28px 0;
+    animation: fadeUp 1s ease 0.5s both;
+  }
+
+  .mission-card::before {
+    content: '📋 NOTE DE MISSION À LIRE ATTENTIVEMENT';
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--pink);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .mission-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mission-card li {
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.82);
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .mission-card li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--pink);
+    font-weight: 700;
+  }
+
+  .mission-card li strong { color: var(--pink); font-weight: 600; }
+
+  .iphone-tip {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-top: 18px;
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.8;
+  }
+
+  .iphone-tip strong {
+    color: rgba(255,255,255,0.8);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* ── COUNTDOWN ── */
+  .countdown-section {
+    margin: 36px 0;
+    animation: fadeUp 1s ease 0.6s both;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .countdown-cell {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 18px 10px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .countdown-cell::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gradient);
+    opacity: 0.6;
+  }
+
+  .countdown-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    display: block;
+  }
+
+  .countdown-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-top: 6px;
+    display: block;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-section {
+    margin: 28px 0;
+    animation: fadeUp 1s ease 0.7s both;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .progress-bar-bg {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--gradient);
+    border-radius: 99px;
+    transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    width: 0%;
+  }
+
+  .progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 40px; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { transform: translateX(-40px); opacity: 0; }
+    50%  { opacity: 1; }
+    100% { transform: translateX(10px); opacity: 0; }
+  }
+
+  /* ── ENIGMA CARDS ── */
+  .enigmas-section { margin-top: 36px; animation: fadeUp 1s ease 0.85s both; }
+  .enigmas-grid { display: flex; flex-direction: column; gap: 14px; }
+
+  .enigma-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .enigma-card.unlocked {
+    border-color: rgba(255,126,185,0.3);
+    cursor: pointer;
+  }
+
+  .enigma-card.unlocked:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(255,126,185,0.12);
+  }
+
+  .enigma-card.active-now {
+    border-color: rgba(255,126,185,0.6);
+    animation: pulse-glow 3s ease infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%,100% { box-shadow: 0 0 30px rgba(255,126,185,0.2), 0 0 0 1px rgba(255,126,185,0.3); }
+    50%      { box-shadow: 0 0 50px rgba(255,126,185,0.35), 0 0 0 1px rgba(255,126,185,0.5); }
+  }
+
+  .enigma-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+  }
+
+  .enigma-meta { display: flex; align-items: center; gap: 12px; }
+
+  .enigma-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--gradient);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .locked-card .enigma-num {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.3);
+  }
+
+  .enigma-info { display: flex; flex-direction: column; gap: 3px; }
+
+  .enigma-chapter {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pink);
+    opacity: 0.8;
+  }
+
+  .locked-card .enigma-chapter { color: rgba(255,255,255,0.2); }
+
+  .enigma-date {
+    font-size: 13px; font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.02em;
+  }
+
+  .locked-card .enigma-date { color: rgba(255,255,255,0.3); }
+
+  .enigma-sublabel { font-size: 11px; color: rgba(255,126,185,0.6); }
+  .locked-card .enigma-sublabel { color: rgba(255,255,255,0.2); }
+
+  /* badge */
+  .enigma-badge {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 50px; flex-shrink: 0;
+  }
+
+  .badge-now {
+    background: var(--gradient);
+    color: white; font-weight: 600;
+    animation: badge-pulse 2s ease infinite;
+  }
+
+  .badge-open {
+    background: rgba(255,126,185,0.15);
+    color: var(--pink);
+    border: 1px solid rgba(255,126,185,0.3);
+  }
+
+  @keyframes badge-pulse {
+    0%,100% { opacity:1; } 50% { opacity:0.75; }
+  }
+
+  /* locked days badge */
+  .locked-days-badge {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 6px 12px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .locked-days-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; font-weight: 700;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block; line-height: 1;
+  }
+
+  .locked-days-label {
+    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    display: block; margin-top: 3px;
+  }
+
+  /* opened body */
+  .enigma-body { padding: 0 22px 22px; animation: fadeIn 0.4s ease; }
+
+  .enigma-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin-bottom: 18px;
+  }
+
+  .enigma-text {
+    font-size: 14.5px; line-height: 1.9;
+    color: rgba(255,255,255,0.85);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    white-space: pre-line;
+    margin-bottom: 16px;
+  }
+
+  .keyword-highlight {
+    font-style: normal;
+    font-weight: 700;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: underline;
+    text-decoration-color: rgba(255,126,185,0.4);
+    text-underline-offset: 3px;
+  }
+
+  .enigma-keyword-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,126,185,0.1);
+    border: 1px solid rgba(255,126,185,0.2);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .enigma-keyword-tag span {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700; font-size: 13px;
+  }
+
+  /* ── BLURRED LOCKED BODY ── */
+  .enigma-body-locked {
+    padding: 0 22px 22px;
+    position: relative;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .enigma-body-locked .enigma-text,
+  .enigma-body-locked .enigma-keyword-tag {
+    filter: blur(7px);
+    opacity: 0.5;
+  }
+
+  .lock-veil {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    z-index: 2;
+  }
+
+  .lock-veil-icon { font-size: 22px; }
+
+  .lock-veil-text {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* special tag */
+  .special-tag {
+    display: inline-block;
+    font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+    background: rgba(255,126,185,0.12);
+    color: var(--pink);
+    padding: 3px 8px; border-radius: 4px;
+    margin-bottom: 4px;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(14,8,18,0.88);
+    backdrop-filter: blur(16px);
+    z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: #1a0f24;
+    border: 1px solid rgba(255,126,185,0.35);
+    border-radius: 28px;
+    padding: 36px 32px;
+    max-width: 520px; width: 100%;
+    position: relative;
+    transform: scale(0.92) translateY(20px);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+    max-height: 90vh; overflow-y: auto;
+  }
+
+  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: none; color: rgba(255,255,255,0.6);
+    font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .modal-close:hover { background: rgba(255,255,255,0.15); }
+
+  .modal-chapter {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--pink); margin-bottom: 4px;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+    margin-bottom: 22px;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .modal-text {
+    font-size: 15px; line-height: 1.9;
+    color: rgba(255,255,255,0.85);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    white-space: pre-line;
+    margin-bottom: 20px;
+  }
+
+  .modal-keyword {
+    background: rgba(255,126,185,0.1);
+    border: 1px solid rgba(255,126,185,0.3);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .modal-keyword-label {
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.4); margin-bottom: 4px;
+  }
+
+  .modal-keyword-word {
+    font-size: 1.2rem; font-weight: 700;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .modal-keyword-hint {
+    font-size: 11px; color: rgba(255,255,255,0.25);
+    text-align: right; font-style: italic; max-width: 130px;
+  }
+
+  /* no keyword style */
+  .modal-keyword.no-keyword { opacity: 0.4; }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center; padding: 40px 0 20px;
+    font-size: 12px; color: rgba(255,255,255,0.2); letter-spacing: 0.08em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity:0; transform:translateY(-20px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(24px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity:0; } to { opacity:1; }
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,126,185,0.3); border-radius: 99px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">✦ Opération Secrète ✦</div>
+    <h1>Nalya</h1>
+    <p class="hero-sub">18 ans — Le compte à rebours a commencé</p>
+  </div>
+
+  <!-- PHOTO -->
+  <div class="photo-section">
+    <div class="photo-frame">
+      <img src="photogroupe.JPG" alt="Nous quatre">
+      <p class="photo-caption">Antonin · Ethan · Lise · Nalya ✦</p>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro-card">
+    <p>Certaines portes ne s'ouvrent qu'une fois.</p>
+    <p>Le seuil des 18 ans est franchi, mais l'accès à ce qui t'est destiné reste suspendu. Ce qui t'attend n'est pas un simple présent, c'est une récompense qui exige de la persévérance.</p>
+    <p>Nalya, le compte à rebours a commencé. Sauras-tu déchiffrer ce que le futur te réserve ou resteras-tu à la porte&nbsp;?</p>
+  </div>
+
+  <!-- MISSION -->
+  <div class="mission-card">
+    <ul>
+      <li><strong>Bloque ta journée :</strong> Le <strong>19 OCTOBRE</strong> t'appartient entièrement. Ne prévois rien d'autre, de l'aube jusqu'au crépuscule.</li>
+      <li><strong>Un fragment par semaine :</strong> Chaque semaine, une nouvelle énigme s'active. Reviens régulièrement sur cette page.</li>
+      <li><strong>Le Dress Code :</strong> Prépare une tenue où tu te trouves magnifique (il y aura des photos !), mais attention : tes chaussures doivent être tes meilleures alliées. Le confort est l'unique clé de cette journée.</li>
+      <li><strong>Le Secret :</strong> N'essaie pas de deviner. Même le matin du départ, le mystère restera entier. Laisse-toi simplement porter.</li>
+    </ul>
+    <div class="iphone-tip">
+      <strong>💡 Ajoute cette page à ton écran d'accueil pour ne rien manquer</strong>
+      Sur iPhone :<br>
+      1. Appuie sur le bouton Partager (📤) en bas de l'écran<br>
+      2. Descends et choisis <em>Sur l'écran d'accueil</em><br>
+      3. Appuie sur <em>Ajouter</em>
+    </div>
+  </div>
+
+  <!-- COUNTDOWN -->
+  <div class="countdown-section">
+    <p class="section-label">Temps avant le grand jour — 19 octobre</p>
+    <div class="countdown-grid">
+      <div class="countdown-cell">
+        <span class="countdown-num" id="cd-days">--</span>
+        <span class="countdown-label">Jours</span>
+      </div>
+      <div class="countdown-cell">
+        <span class="countdown-num" id="cd-hours">--</span>
+        <span class="countdown-label">Heures</span>
+      </div>
+      <div class="countdown-cell">
+        <span class="countdown-num" id="cd-mins">--</span>
+        <span class="countdown-label">Minutes</span>
+      </div>
+      <div class="countdown-cell">
+        <span class="countdown-num" id="cd-secs">--</span>
+        <span class="countdown-label">Secondes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-section">
+    <div class="progress-header">
+      <div class="section-label" style="margin:0">Fragments débloqués</div>
+      <div class="progress-pct" id="progress-pct">0%</div>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- ENIGMAS -->
+  <div class="enigmas-section">
+    <p class="section-label">Les Fragments</p>
+    <div class="enigmas-grid" id="enigmas-grid"></div>
+  </div>
+
+  <div class="footer">✦ Fait avec amour — Antonin, Ethan & Lise ✦</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-chapter" id="modal-chapter"></div>
+    <div class="modal-title"   id="modal-title"></div>
+    <div class="modal-text"    id="modal-text"></div>
+    <div class="modal-keyword" id="modal-keyword-box">
+      <div>
+        <div class="modal-keyword-label">Mot-clé du fragment</div>
+        <div class="modal-keyword-word" id="modal-keyword-word"></div>
+      </div>
+      <div class="modal-keyword-hint">Note-le soigneusement… il fait partie de quelque chose.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DONNÉES — textes EXACTS tels qu'écrits
+// unlock = [year, month(1-12), day, hour, minute]
+// ══════════════════════════════════════════════
+
+const ENIGMAS = [
+  {
+    unlock: [2025, 7, 18, 20, 30],
+    chapter: "Chapitre 1",
+    title: "Absence programmée",
+    keyword: null,
+    text: `Certaines présences ne disparaissent pas vraiment.
+ Elles se décalent.
+ Elles s'organisent autrement dans le temps.
+
+Aujourd'hui, quelque chose manque.
+ Et ce manque n'est pas une erreur.
+C'est une décision.
+
+Si tu lis ces lignes, c'est que le mécanisme est déjà lancé.
+Rien ne pourra l'arrêter.
+ Rien ne doit l'arrêter.
+
+Ce soir, observe simplement ce qui ne se dit pas.
+ Les silences sont parfois plus précis que les mots.`
+  },
+  {
+    unlock: [2025, 7, 19, 12, 30],
+    chapter: "Chapitre 2",
+    title: "Retour différé",
+    keyword: "RETOUR",
+    text: `Le RETOUR n'est jamais ce qu'on imagine.
+On pense qu'il ferme une absence.
+ Mais parfois il ouvre une histoire que personne n'avait anticipée.
+
+Il existe des retours visibles.
+ Et d'autres qui ne se montrent pas immédiatement.
+Ceux-là sont les plus intéressants.
+Ils avancent sans bruit.
+ Sans annonce.
+ Sans logique apparente.
+
+Et pourtant, ils arrivent toujours au bon moment.
+ Même quand personne ne les attend vraiment.`
+  },
+  {
+    unlock: [2025, 7, 26, 18, 0],
+    chapter: "Chapitre 3",
+    title: "Direction implicite",
+    keyword: "CAP",
+    text: `Chaque trajectoire commence par une direction, même invisible.
+Le plus trompeur n'est pas de se perdre.
+ C'est de croire qu'on sait déjà où l'on va.
+
+Un CAP n'est pas une destination.
+ C'est une intention.
+Et certaines intentions sont cachées exprès pour ne pas être comprises trop tôt.
+
+Plus on tente de les fixer, plus elles changent légèrement d'angle.
+ Comme si quelque chose les corrigeait en permanence.`
+  },
+  {
+    unlock: [2025, 8, 2, 18, 0],
+    chapter: "Chapitre 4",
+    title: "Lecture du monde",
+    keyword: "CARTE",
+    text: `Une CARTE donne l'illusion du contrôle.
+On croit lire un monde.
+ Mais en réalité, on ne lit qu'une interprétation.
+
+Les routes y sont dessinées.
+ Les distances y sont figées.
+ Les directions semblent simples.
+
+Pourtant dans la vraie vie, rien n'est parfaitement tracé.
+Certaines lignes bougent sans prévenir.
+ Et certains chemins n'existent que lorsqu'on commence à les emprunter.`
+  },
+  {
+    unlock: [2025, 8, 9, 18, 0],
+    chapter: "Chapitre 5",
+    title: "Le bord du visible",
+    keyword: "HORIZON",
+    text: `L'HORIZON est une promesse étrange.
+Il donne l'impression d'être une limite.
+ Mais il disparaît toujours au moment où on s'en approche.
+Comme si quelque chose refusait d'être atteint trop facilement.
+
+Plus on avance, plus il recule légèrement.
+Et pourtant on continue.
+ Sans raison claire.
+ Juste parce qu'il est là.`
+  },
+  {
+    unlock: [2025, 8, 16, 18, 0],
+    chapter: "Chapitre 6",
+    title: "Signal fixe",
+    keyword: "PHARE",
+    text: `Un PHARE ne cherche pas à être compris.
+ Il fonctionne.
+ C'est tout.
+
+Il n'explique rien.
+ Il n'interprète rien.
+ Il existe simplement pour être vu au bon moment.
+
+Ceux qui le remarquent comprennent souvent trop tard qu'ils l'avaient déjà croisé mentalement avant même de le voir réellement.`
+  },
+  {
+    unlock: [2025, 8, 23, 18, 0],
+    chapter: "Chapitre 7",
+    title: "Passage",
+    keyword: "PONT",
+    text: `Un PONT n'a de sens que s'il relie deux choses.
+Mais ce que peu de gens réalisent, c'est qu'il transforme aussi ceux qui le traversent.
+
+On ne revient jamais exactement comme on est parti.
+Même un trajet court laisse une trace invisible.
+Et certaines traces ne s'effacent pas facilement.`
+  },
+  {
+    unlock: [2025, 8, 30, 18, 0],
+    chapter: "Chapitre 8",
+    title: "Mouvement",
+    keyword: "TRAJET",
+    text: `Un TRAJET n'est jamais neutre.
+Il contient toujours plus que des kilomètres.
+Il contient des décisions, des hésitations, des accélérations invisibles.
+Parfois même des détours qui semblaient inutiles sur le moment.
+Mais avec le recul, tout finit par sembler logique.`
+  },
+  {
+    unlock: [2025, 9, 6, 18, 0],
+    chapter: "Chapitre 9",
+    title: "Le leurre",
+    keyword: "BRUME",
+    text: `La BRUME n'empêche pas d'avancer.
+ Elle empêche de comprendre immédiatement où l'on va.
+Et c'est parfois suffisant pour changer totalement une perception.
+
+Ce qui est visible peut être faux.
+ Ce qui est flou peut être vrai.
+Tout dépend de la manière dont on regarde.`
+  },
+  {
+    unlock: [2025, 9, 13, 18, 0],
+    chapter: "Chapitre 10",
+    title: "Organisation",
+    keyword: "PORT",
+    text: `Un PORT est un point d'organisation invisible du monde.
+Les arrivées y ressemblent à des départs.
+ Les départs y ressemblent à des arrivées.
+Rien n'y est vraiment définitif.
+Tout y est temporaire.
+Et pourtant tout y semble important.`
+  },
+  {
+    unlock: [2025, 9, 20, 18, 0],
+    chapter: "Chapitre 11",
+    title: "Cohérence",
+    keyword: "ÉTOILE",
+    text: `Les ÉTOILES ne bougent presque pas à l'échelle humaine.
+Et pourtant elles ont guidé des millions de décisions.
+C'est peut-être ça, leur vrai pouvoir.
+Ne jamais changer assez vite pour perdre leur sens.`
+  },
+  {
+    unlock: [2025, 9, 27, 18, 0],
+    chapter: "Chapitre 12",
+    title: "Conclusion apparente",
+    keyword: "MER",
+    text: `La MER est l'endroit où tout semble possible.
+Elle peut être calme ou imprévisible.
+Elle attire sans jamais expliquer pourquoi.
+Et souvent, elle devient la réponse la plus évidente… même quand ce n'est pas la bonne.`
+  },
+  {
+    unlock: [2025, 10, 4, 18, 0],
+    chapter: "Chapitre 13",
+    title: "Faux point final",
+    keyword: "ROUTE",
+    text: `Une ROUTE semble toujours mener quelque part.
+Mais certaines routes existent surtout pour faire croire qu'on comprend le plan.
+La sensation de maîtrise est parfois plus importante que la vérité du trajet.`
+  },
+  {
+    unlock: [2025, 10, 18, 20, 30],
+    chapter: "Chapitre final",
+    title: "Révélation des fragments",
+    keyword: null,
+    special: "Veille du Grand Jour",
+    text: `Tu as collecté les éléments.
+Les mots semblaient parler de voyage.
+ De mer.
+ De départs.
+ De retours.
+Pourtant la logique complète était ailleurs depuis le début.
+
+Voici les fragments :
+RETOUR
+CAP
+CARTE
+HORIZON
+PHARE
+PONT
+TRAJET
+BRUME
+PORT
+ÉTOILE
+MER
+ROUTE
+
+Ensemble, ils racontent une seule chose :
+ un déplacement organisé.
+ une trajectoire construite.
+ une direction cohérente.
+Mais pas celle que tu imaginais.`
+  },
+  {
+    unlock: [2025, 10, 19, 6, 45],
+    chapter: "RÉVÉLATION FINALE",
+    title: "Le Grand Jour",
+    keyword: null,
+    special: "19 octobre — 6h45 🚀",
+    text: `Tu pensais lire une destination.
+En réalité, tu lisais une préparation.
+Depuis le début, tout pointait vers une seule chose :
+ une journée complète organisée pour toi.
+
+Et maintenant…
+il est temps de comprendre pourquoi certains éléments semblaient trop évidents pour être vrais.
+Parce qu'ils l'étaient.
+Et pourtant, ils t'ont menée ailleurs.
+
+Ce matin, quelqu'un que tu croyais absent ne l'est plus.
+
+6h45.
+Départ.
+Antonin. Ethan. Lise.
+Destination : Encore un peu de patience.`
+  }
+];
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+
+// unlock time as JS Date (local)
+function unlockDate(e) {
+  const [y, mo, d, h, mi] = e.unlock;
+  return new Date(y, mo - 1, d, h, mi, 0);
+}
+
+function now() { return new Date(); }
+
+function isUnlocked(e) { return now() >= unlockDate(e); }
+
+function isActiveNow(e) {
+  const u = unlockDate(e);
+  const n = now();
+  // active if unlocked today (same day as unlock date and we're past the time)
+  return n >= u && n.toDateString() === u.toDateString();
+}
+
+function minutesUntil(e) {
+  return Math.ceil((unlockDate(e) - now()) / 60000);
+}
+
+function hoursUntil(e) {
+  return Math.ceil((unlockDate(e) - now()) / 3600000);
+}
+
+function daysUntil(e) {
+  // full calendar days remaining (not counting today)
+  const n = now();
+  const todayMidnight = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  const unlockDay     = new Date(e.unlock[0], e.unlock[1]-1, e.unlock[2]);
+  return Math.ceil((unlockDay - todayMidnight) / 86400000);
+}
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function formatUnlockTime(e) {
+  return `${e.unlock[2].toString().padStart(2,'0')}/${e.unlock[1].toString().padStart(2,'0')} à ${pad(e.unlock[3])}h${e.unlock[4] ? pad(e.unlock[4]) : '00'}`;
+}
+
+// Highlight keyword in text
+function highlightKeyword(text, keyword) {
+  if (!keyword) return escHtml(text);
+  const escaped = escHtml(text);
+  const re = new RegExp('\\b' + keyword + '\\b', 'g');
+  return escaped.replace(re, `<span class="keyword-highlight">${keyword}</span>`);
+}
+
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══════════════════════════════════════════════
+// Décompte avant le départ
+// ══════════════════════════════════════════════
+
+const DEPARTURE = new Date(2026, 9, 19, 6, 45, 0); // 19 oct 2025
+
+function updateCountdown() {
+  const diff = DEPARTURE - now();
+  if (diff <= 0) {
+    ['days','hours','mins','secs'].forEach(k => document.getElementById('cd-'+k).textContent = '00');
+    return;
+  }
+  document.getElementById('cd-days').textContent  = pad(Math.floor(diff / 86400000));
+  document.getElementById('cd-hours').textContent = pad(Math.floor((diff % 86400000) / 3600000));
+  document.getElementById('cd-mins').textContent  = pad(Math.floor((diff % 3600000) / 60000));
+  document.getElementById('cd-secs').textContent  = pad(Math.floor((diff % 60000) / 1000));
+}
+
+// ══════════════════════════════════════════════
+// PROGRESS
+// ══════════════════════════════════════════════
+
+function updateProgress() {
+  const total    = ENIGMAS.length;
+  const unlocked = ENIGMAS.filter(isUnlocked).length;
+  const pct      = Math.round((unlocked / total) * 100);
+  document.getElementById('progress-pct').textContent = pct + '%';
+  setTimeout(() => { document.getElementById('progress-bar').style.width = pct + '%'; }, 500);
+}
+
+// ══════════════════════════════════════════════
+// BUILD CARDS
+// ══════════════════════════════════════════════
+
+function buildCards() {
+  const grid = document.getElementById('enigmas-grid');
+  grid.innerHTML = '';
+
+  ENIGMAS.forEach((e, i) => {
+    const unlocked = isUnlocked(e);
+    const activeNow = isActiveNow(e);
+    const du = daysUntil(e);
+
+    const card = document.createElement('div');
+    card.className = 'enigma-card'
+      + (unlocked   ? ' unlocked'   : ' locked-card')
+      + (activeNow  ? ' active-now' : '');
+
+    if (unlocked) card.onclick = () => openModal(i);
+
+    const specialTag = e.special
+      ? `<div class="special-tag">${e.special}</div>` : '';
+
+    const chapterLabel = `${e.chapter}${e.title ? ' — ' + e.title : ''}`;
+
+    if (unlocked) {
+      // ── UNLOCKED ──
+      const badge = activeNow
+        ? `<span class="enigma-badge badge-now">Nouveau ✦</span>`
+        : `<span class="enigma-badge badge-open">Ouvert</span>`;
+
+      card.innerHTML = `
+        <div class="enigma-header">
+          <div class="enigma-meta">
+            <div class="enigma-num">${i+1}</div>
+            <div class="enigma-info">
+              ${specialTag}
+              <span class="enigma-chapter">${e.chapter}</span>
+              <span class="enigma-date">${e.title}</span>
+              <span class="enigma-sublabel">${formatUnlockTime(e)}</span>
+            </div>
+          </div>
+          ${badge}
+        </div>
+        <div class="enigma-body">
+          <div class="enigma-divider"></div>
+          <div class="enigma-text">${highlightKeyword(e.text, e.keyword)}</div>
+          ${e.keyword
+            ? `<div class="enigma-keyword-tag">✦ Mot-clé : <span>${e.keyword}</span></div>`
+            : `<div class="enigma-keyword-tag" style="opacity:0.4">✦ Pas de mot-clé pour ce fragment</div>`
+          }
+        </div>`;
+    } else {
+      // ── LOCKED : texte flouté ──
+      const duLabel = du <= 0 ? "aujourd'hui" : du === 1 ? 'demain' : `dans ${du} jours`;
+
+      card.innerHTML = `
+        <div class="enigma-header">
+          <div class="enigma-meta">
+            <div class="enigma-num">${i+1}</div>
+            <div class="enigma-info">
+              ${specialTag}
+              <span class="enigma-chapter">${e.chapter}</span>
+              <span class="enigma-date">${e.title}</span>
+              <span class="enigma-sublabel">🔒 Débloqué ${duLabel}</span>
+            </div>
+          </div>
+          <div class="locked-days-badge">
+            <span class="locked-days-num">${du > 0 ? du : '!'}</span>
+            <span class="locked-days-label">${du > 1 ? 'jours' : 'jour'}</span>
+          </div>
+        </div>
+        <div class="enigma-body-locked">
+          <div class="enigma-divider"></div>
+          <div class="enigma-text">${escHtml(e.text)}</div>
+          ${e.keyword
+            ? `<div class="enigma-keyword-tag">✦ Mot-clé : <span>??????</span></div>`
+            : `<div class="enigma-keyword-tag">✦ Mot-clé : <span>??????</span></div>`
+          }
+          <div class="lock-veil">
+            <span class="lock-veil-icon">🔒</span>
+            <span class="lock-veil-text">${formatUnlockTime(e)}</span>
+          </div>
+        </div>`;
+    }
+
+    grid.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════
+
+function openModal(i) {
+  const e = ENIGMAS[i];
+  document.getElementById('modal-chapter').textContent = e.chapter;
+  document.getElementById('modal-title').textContent   = e.title;
+  document.getElementById('modal-text').innerHTML      = highlightKeyword(e.text, e.keyword);
+
+  const kbox = document.getElementById('modal-keyword-box');
+  const kword = document.getElementById('modal-keyword-word');
+
+  if (e.keyword) {
+    kbox.classList.remove('no-keyword');
+    kword.textContent = e.keyword;
+  } else {
+    kbox.classList.add('no-keyword');
+    kword.textContent = '(aucun)';
+  }
+
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModalOutside(ev) {
+  if (ev.target === document.getElementById('modal-overlay')) closeModalDirect();
+}
+
+function closeModalDirect() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+
+buildCards();
+updateProgress();
+updateCountdown();
+setInterval(updateCountdown, 1000);
+// refresh cards every minute in case one unlocks while the page is open
+setInterval(() => { buildCards(); updateProgress(); }, 60000);
+</script>
+</body>
+</html>

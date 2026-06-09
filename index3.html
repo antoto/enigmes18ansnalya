@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TRANSMISSION PRIORITAIRE</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PROJET X.28">
+    <link rel="apple-touch-icon" href="icone.png">
+    <link rel="icon" type="image/png" href="icone.png">
+    <meta property="og:title" content="TRANSMISSION PRIORITAIRE">
+    <meta property="og:description" content="Accès restreint. Initialisation du protocole Nalya-18...">
+    <meta property="og:image" content="icone.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=Poppins:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --accent: #6a11cb;
+            --accent2: #8b2fc9;
+            --pink: #ff7eb9;
+            --pink2: #ff4da6;
+            --bg: #0a0818;
+            --bg2: #0f0c29;
+            --glass: rgba(255, 255, 255, 0.06);
+            --glass2: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-border2: rgba(255, 255, 255, 0.06);
+            --glow-pink: rgba(255, 126, 185, 0.15);
+            --glow-accent: rgba(106, 17, 203, 0.2);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ═══════════════════════════════════════════
+           ÉTOILES ANIMÉES EN FOND
+        ═══════════════════════════════════════════ */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: white;
+            animation: twinkle var(--dur, 3s) ease-in-out infinite;
+            animation-delay: var(--delay, 0s);
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            50% {
+                opacity: var(--opacity, 0.6);
+                transform: scale(1);
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           BLOBS LUMINEUX
+        ═══════════════════════════════════════════ */
+        .blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+            animation: blobFloat 8s ease-in-out infinite alternate;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            opacity: 0.07;
+            top: -150px;
+            right: -150px;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--pink);
+            opacity: 0.06;
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -4s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: #3b0764;
+            opacity: 0.12;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -2s;
+        }
+
+        @keyframes blobFloat {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(20px, 20px) scale(1.05);
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           ÉCRAN ANNIVERSAIRE
+        ═══════════════════════════════════════════ */
+        #final-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
+            padding: 70px 24px 60px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(160deg, #0d0a1f 0%, #1a0a2e 40%, #0f0c29 100%);
+        }
+
+        .bday-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 18px;
+            border: 1px solid rgba(255, 126, 185, 0.4);
+            border-radius: 50px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.62rem;
+            color: var(--pink);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: rgba(255, 126, 185, 0.07);
+            margin-bottom: 28px;
+            backdrop-filter: blur(10px);
+        }
+
+        .bday-chip::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--pink);
+            box-shadow: 0 0 8px var(--pink);
+            animation: chipPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes chipPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .hb-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 900;
+            font-size: clamp(3.2rem, 14vw, 5rem);
+            line-height: 0.88;
+            letter-spacing: -3px;
+            background: linear-gradient(135deg, #ffffff 0%, #e0d0ff 40%, var(--pink) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 0 40px rgba(255, 126, 185, 0.3));
+        }
+
+        .hb-sub {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.25);
+            margin-bottom: 40px;
+        }
+
+        .photo-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto 40px;
+        }
+
+        .photo-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, var(--accent), transparent 40%, var(--pink));
+            z-index: 0;
+            opacity: 0.7;
+        }
+
+        .photo-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            border-radius: 50px;
+            background: radial-gradient(ellipse, rgba(255, 126, 185, 0.15) 0%, transparent 70%);
+            z-index: -1;
+            animation: photoGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes photoGlow {
+            from {
+                opacity: 0.5;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .group-photo {
+            width: 100%;
+            border-radius: 26px;
+            position: relative;
+            z-index: 1;
+            display: block;
+            transform: rotate(-1deg);
+        }
+
+        .glass-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 28px 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .personal-note {
+            font-size: 0.88rem;
+            line-height: 1.8;
+            color: #c8c0d8;
+            text-align: center;
+        }
+
+        .personal-note b {
+            color: var(--pink);
+            font-weight: 700;
+        }
+
+        /* Boîte demain */
+        .tomorrow-card {
+            background: linear-gradient(135deg, rgba(255, 126, 185, 0.08), rgba(106, 17, 203, 0.08));
+            border: 1px solid rgba(255, 126, 185, 0.25);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 32px;
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tomorrow-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 126, 185, 0.5), transparent);
+        }
+
+        .tomorrow-tag {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.55rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--pink);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tomorrow-tag .live-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--pink);
+            box-shadow: 0 0 6px var(--pink);
+            animation: chipPulse 1.2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        .tomorrow-msg {
+            font-size: 0.87rem;
+            line-height: 1.8;
+            color: #ddc8e0;
+        }
+
+        .tomorrow-msg b {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #fff 0%, #e8d0ff 100%);
+            color: #1a0a2e;
+            border: none;
+            padding: 18px 44px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            width: 85%;
+            max-width: 320px;
+            box-shadow: 0 8px 32px rgba(255, 126, 185, 0.3), 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(255, 126, 185, 0.45), 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-start:active {
+            transform: translateY(0);
+        }
+
+        /* ═══════════════════════════════════════════
+           ÉCRAN MISSION
+        ═══════════════════════════════════════════ */
+        #mission-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
+            padding-bottom: 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header mission */
+        .mission-header {
+            width: 100%;
+            padding: 70px 24px 48px;
+            text-align: center;
+            position: relative;
+        }
+
+        .mission-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 126, 185, 0.4), transparent);
+        }
+
+        .mission-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 18px;
+            border: 1px solid rgba(255, 126, 185, 0.35);
+            border-radius: 50px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.6rem;
+            color: var(--pink);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: rgba(255, 126, 185, 0.07);
+            margin-bottom: 20px;
+        }
+
+        .mission-chip::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--pink);
+            box-shadow: 0 0 6px var(--pink);
+            animation: chipPulse 1.5s ease-in-out infinite;
+        }
+
+        .mission-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 900;
+            font-size: clamp(1.8rem, 8vw, 2.8rem);
+            line-height: 0.92;
+            letter-spacing: -1.5px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #ffffff 0%, #d4b8ff 50%, var(--pink) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .mission-code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.58rem;
+            letter-spacing: 5px;
+            color: rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            margin-bottom: 36px;
+        }
+
+        /* Compte à rebours */
+        .countdown-section {
+            margin-bottom: 28px;
+        }
+
+        .cd-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.52rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255, 126, 185, 0.6);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .cd-blocks {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .cd-block {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 14px 10px 10px;
+            min-width: 68px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cd-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent);
+        }
+
+        .cd-num {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            display: block;
+            text-shadow: 0 0 20px rgba(255, 126, 185, 0.4);
+        }
+
+        .cd-unit {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.43rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--pink);
+            margin-top: 5px;
+            display: block;
+            opacity: 0.8;
+        }
+
+        /* Barre de progression */
+        .progress-wrap {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .progress-row {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.58rem;
+            color: rgba(255, 126, 185, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .progress-track {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent), var(--pink));
+            box-shadow: 0 0 12px var(--pink);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 0 20px;
+            margin: 0 auto;
+        }
+
+        /* Note de mission */
+        .note-box {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 28px 24px;
+            margin: 40px 0 12px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.18), transparent);
+        }
+
+        .note-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            letter-spacing: 1px;
+            color: #fff;
+            margin-bottom: 18px;
+        }
+
+        .note-title-bar {
+            width: 3px;
+            height: 18px;
+            background: linear-gradient(to bottom, var(--accent), var(--pink));
+            border-radius: 3px;
+            box-shadow: 0 0 10px var(--pink);
+        }
+
+        .note-list {
+            list-style: none;
+            font-size: 0.8rem;
+            line-height: 1.75;
+            color: #b8aac8;
+        }
+
+        .note-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--glass-border2);
+        }
+
+        .note-list li:last-child {
+            border-bottom: none;
+        }
+
+        .note-list b {
+            color: #e8d8f8;
+        }
+
+        .homescreen-box {
+            background: rgba(255, 126, 185, 0.06);
+            border: 1px solid rgba(255, 126, 185, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 18px;
+            font-size: 0.78rem;
+            line-height: 1.6;
+            color: #b8a0c0;
+        }
+
+        .homescreen-box strong {
+            color: var(--pink);
+        }
+
+        /* Séparateur */
+        .sep {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 36px 0 20px;
+        }
+
+        .sep-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.07));
+        }
+
+        .sep-line.right {
+            background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.07));
+        }
+
+        .sep-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.52rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.18);
+            white-space: nowrap;
+        }
+
+        /* ═══════════════════════════════════════════
+           CARTES D'ÉNIGMES
+        ═══════════════════════════════════════════ */
+        .hint-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 0;
+            margin-bottom: 14px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            position: relative;
+        }
+
+        .hint-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.12), transparent);
+        }
+
+        .hint-card.is-ready {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hint-card:hover {
+            border-color: rgba(255, 126, 185, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 126, 185, 0.08);
+        }
+
+        /* En-tête de carte */
+        .card-header {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            gap: 16px;
+            border-bottom: 1px solid var(--glass-border2);
+        }
+
+        .date-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 58px;
+            height: 58px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--pink2));
+            box-shadow: 0 4px 16px rgba(106, 17, 203, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
+            flex-shrink: 0;
+        }
+
+        .date-pill strong {
+            font-size: 1.45rem;
+            font-weight: 800;
+            line-height: 1;
+            color: #fff;
+        }
+
+        .date-pill span {
+            font-size: 0.52rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.75);
+            letter-spacing: 1px;
+        }
+
+        .card-meta {
+            flex: 1;
+        }
+
+        .card-type {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.52rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--pink);
+            opacity: 0.8;
+            margin-bottom: 3px;
+        }
+
+        .card-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #e8e0f0;
+        }
+
+        /* Badge statut */
+        .card-status {
+            flex-shrink: 0;
+        }
+
+        .status-locked {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        .status-done {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        /* Corps de la carte */
+        .card-body {
+            padding: 0 20px 20px;
+        }
+
+        /* Countdown locked */
+        .cd-locked {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 0 0;
+        }
+
+        .cd-locked-icon {
+            font-size: 1.1rem;
+            opacity: 0.3;
+        }
+
+        .cd-locked-text {
+            flex: 1;
+        }
+
+        .cd-locked-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.48rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.3);
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .cd-locked-val {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.78rem;
+            color: rgba(255, 126, 185, 0.6);
+            font-weight: 600;
+        }
+
+        /* Texte de l'énigme (flou → révélé) */
+        .enigme-wrap {
+            padding-top: 18px;
+        }
+
+        .enigme-text {
+            font-size: 0.88rem;
+            line-height: 1.85;
+            color: #d8cce8;
+            transition: all 0.6s ease;
+            font-weight: 300;
+        }
+
+        .enigme-text b,
+        .enigme-text strong {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .enigme-text.is-blur {
+            filter: blur(10px);
+            opacity: 0.2;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .highlight {
+            color: var(--pink);
+            font-weight: 600;
+            text-shadow: 0 0 12px rgba(255, 126, 185, 0.35);
+        }
+
+        .unlock-hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background: rgba(255, 126, 185, 0.06);
+            border: 1px solid rgba(255, 126, 185, 0.15);
+            border-radius: 12px;
+            font-size: 0.72rem;
+            color: rgba(255, 126, 185, 0.7);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .unlock-hint:hover {
+            background: rgba(255, 126, 185, 0.1);
+            border-color: rgba(255, 126, 185, 0.3);
+        }
+
+        .unlock-hint span {
+            font-size: 1rem;
+        }
+
+        /* Carte spéciale "alerte" */
+        .hint-card.card-alerte {
+            background: linear-gradient(135deg, rgba(255, 126, 185, 0.06), rgba(106, 17, 203, 0.06));
+            border-color: rgba(255, 126, 185, 0.2);
+        }
+
+        .hint-card.card-alerte .date-pill {
+            background: linear-gradient(135deg, #7b2d8b, var(--pink));
+        }
+
+        /* ═══════════════════════════════════════════
+           POPUP
+        ═══════════════════════════════════════════ */
+        #mission-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 4, 15, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .popup-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 44px 32px;
+            border-radius: 36px;
+            width: 88%;
+            max-width: 360px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .popup-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .popup-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .popup-title {
+            font-weight: 800;
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .popup-text {
+            font-size: 0.85rem;
+            color: #a8a0b8;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .popup-btn {
+            background: linear-gradient(135deg, #fff, #e8d0ff);
+            color: #1a0a2e;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 2px;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 20px rgba(255, 126, 185, 0.25);
+        }
+
+        /* ═══════════════════════════════════════════
+           ADMIN
+        ═══════════════════════════════════════════ */
+        #admin-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #fff;
+            padding: 16px;
+            border-radius: 20px;
+            display: none;
+            z-index: 10000;
+            color: #333;
+            width: 250px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .admin-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        #secret-trigger {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.01;
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Fond étoilé -->
+    <div class="stars-bg" id="stars-bg"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <audio id="unlock-sound" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3"></audio>
+
+    <!-- ═══════════════════════════════════════════
+     POPUP
+═══════════════════════════════════════════ -->
+    <div id="mission-popup">
+        <div class="popup-card">
+            <span class="popup-icon">⚡</span>
+            <div class="popup-title">Nouvelle transmission</div>
+            <p class="popup-text">Un nouveau fragment vient de se débloquer.<br>La mission avance.</p>
+            <button class="popup-btn" onclick="closePopup()">Découvrir →</button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+     ÉCRAN ANNIVERSAIRE
+═══════════════════════════════════════════ -->
+    <div id="final-screen">
+        <div class="bday-chip">Accès Autorisé · Nalya-18</div>
+        <h1 class="hb-title">JOYEUX<br>18 ANS</h1>
+        <p class="hb-sub">Protocole activé · 22 juin 2026</p>
+        <div class="photo-wrapper">
+            <img src="photogroupe.JPG" class="group-photo" alt="">
+        </div>
+        <div class="glass-card">
+            <p class="personal-note">
+                Certaines portes ne s'ouvrent qu'une fois.<br><br>
+                Le seuil des 18 ans est franchi, mais l'accès à ce qui t'est destiné reste suspendu. Ce qui t'attend
+                n'est pas un simple présent, c'est une récompense qui exige de la persévérance.<br><br>
+                <b>Nalya</b>, le compte à rebours a commencé. Sauras-tu déchiffrer ce que le futur te réserve ou
+                resteras-tu à la porte ?
+            </p>
+        </div>
+        <div class="tomorrow-card">
+            <div class="tomorrow-tag">
+                <div class="live-dot"></div>Signal détecté · 23 juin
+            </div>
+            <p class="tomorrow-msg">
+                Quelque chose — ou <b>quelqu'un</b> — est en route.<br>
+                Une anomalie dans le protocole a été détectée.<br><br>
+                Demain midi, une surprise t'attend.<br>
+                <b>Ne prévois rien.</b>
+            </p>
+        </div>
+        <button class="btn-start" onclick="switchToMission()">Démarrer la mission</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+     ÉCRAN MISSION
+═══════════════════════════════════════════ -->
+    <div id="mission-screen">
+        <header class="mission-header">
+            <div class="mission-chip">Ton cadeau commence ici 🤫</div>
+            <h1 class="mission-title">Il n'y a pas<br>de retour</h1>
+            <div class="mission-code">NALYA · 2026</div>
+
+            <div class="countdown-section">
+                <span class="cd-label">Compte à rebours · Départ le <span id="depart-label">19 oct · 06h45</span></span>
+                <div class="cd-blocks">
+                    <div class="cd-block"><span class="cd-num" id="cd-j">--</span><span class="cd-unit">jours</span>
+                    </div>
+                    <div class="cd-block"><span class="cd-num" id="cd-h">--</span><span class="cd-unit">heures</span>
+                    </div>
+                    <div class="cd-block"><span class="cd-num" id="cd-m">--</span><span class="cd-unit">min</span></div>
+                    <div class="cd-block"><span class="cd-num" id="cd-s">--</span><span class="cd-unit">sec</span></div>
+                </div>
+            </div>
+
+            <div class="progress-wrap">
+                <div class="progress-row">
+                    <span>Fragments débloqués</span>
+                    <span id="status-pct">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="note-box">
+                <div class="note-title">
+                    <div class="note-title-bar"></div>
+                    📋 Note de mission
+                </div>
+                <ul class="note-list">
+                    <li><b>Nalya</b>, ce lien est ton seul guide. Voici les règles :</li>
+                    <li>• <b>Bloque le 19 octobre.</b> Cette journée t'appartient entièrement — de l'aube au crépuscule.
+                    </li>
+                    <li>• <b>Un fragment à la fois :</b> chaque indice se débloque à une date précise. Clique pour
+                        révéler.</li>
+                    <li>• <b>Dress code :</b> ta plus belle tenue, mais des chaussures <b>confortables</b> — tu
+                        marcheras.</li>
+                    <li>• <b>Le secret :</b> n'essaie pas de deviner. Même le matin du départ, le mystère restera
+                        entier.</li>
+                </ul>
+                <div class="homescreen-box">
+                    <strong>Conseil :</strong> Ajoute cette page à ton écran d'accueil pour ne rater aucun
+                    fragment.<br><br>
+                    <strong>iPhone :</strong> Appuie sur 📤 → <em>Sur l'écran d'accueil</em> → Ajouter
+                </div>
+            </div>
+
+            <div class="sep">
+                <div class="sep-line"></div>
+                <div class="sep-label">Transmissions reçues</div>
+                <div class="sep-line right"></div>
+            </div>
+
+            <div id="puzzles-list"></div>
+        </div>
+
+        <div id="secret-trigger">Accès restreint</div>
+
+        <div id="admin-panel">
+            <div onclick="this.parentElement.style.display='none'"
+                style="cursor:pointer;text-align:right;font-weight:bold;margin-bottom:6px;font-size:1.1rem;">✕</div>
+            <p style="font-size:0.72rem;font-weight:800;margin-bottom:10px;color:#333;">⚙️ Panneau Admin</p>
+
+            <p
+                style="font-size:0.6rem;color:#888;font-weight:600;margin-bottom:3px;text-transform:uppercase;letter-spacing:1px;">
+                Date de départ</p>
+            <p style="font-size:0.55rem;color:#aaa;margin-bottom:5px;">Format : YYYY-MM-DDTHH:MM:SS</p>
+            <input type="text" id="depart-date-input" placeholder="2026-10-19T06:45:00"
+                style="width:100%;padding:8px;font-size:0.72rem;border-radius:8px;border:1px solid #ddd;font-family:monospace;">
+            <button class="admin-btn" style="background:#6a11cb;color:white;margin-top:8px;"
+                onclick="updateDepartDate()">
+                💾 Sauvegarder et recharger
+            </button>
+
+            <div style="height:1px;background:#eee;margin:12px 0;"></div>
+
+            <p
+                style="font-size:0.6rem;color:#888;font-weight:600;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;">
+                Simulateur de date</p>
+            <input type="datetime-local" id="test-date"
+                style="width:100%;padding:8px;font-size:0.72rem;border-radius:8px;border:1px solid #ddd;">
+            <button class="admin-btn" style="background:#302b63;color:white;margin-top:8px;" onclick="setTestDate()">
+                🕰 Voyager dans le temps
+            </button>
+
+            <div style="height:1px;background:#eee;margin:12px 0;"></div>
+
+            <button class="admin-btn" style="background:#fee2e2;color:#dc2626;" onclick="resetAll()">
+                🗑 Reset progression
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+
+        // ═══════════════════════════════════════════════════
+        //  DATE DE DÉPART — modifiable ici ou via admin panel
+        // ═══════════════════════════════════════════════════
+        let DATE_DEPART = localStorage.getItem('depart_date') || "2026-10-19T06:45:00";
+
+        // Met à jour le label affiché dans le header au chargement
+        function initDepartLabel() {
+            const d = new Date(DATE_DEPART);
+            if (!isNaN(d.getTime())) {
+                const label = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) + ' · ' +
+                    String(d.getHours()).padStart(2, '0') + 'h' + String(d.getMinutes()).padStart(2, '0');
+                const el = document.getElementById('depart-label');
+                if (el) el.innerText = label;
+            }
+            // Pré-remplit le champ admin
+            const inp = document.getElementById('depart-date-input');
+            if (inp) inp.value = DATE_DEPART;
+        }
+
+        // ═══════════════════════════════════════════════════
+        //  ÉNIGMES
+        //  → Les 9 premières orientent vers Rocamadour (leurre)
+        //  → Les 2 dernières sèment le doute
+        //  → Paris ne sera jamais cité
+        // ═══════════════════════════════════════════════════
+        const ENIGMES = [
+
+            {
+                id: "e01",
+                date: "2026-07-18T21:00:00",
+                jour: "18", mois: "juil.",
+                typeLabel: "Fragment I",
+                titre: "Ce cadeau ne tient pas dans une boîte",
+                texte: `Pour tes 18 ans, on ne t’offre pas un objet.<br>
+On t’offre un moment.<br>
+Un moment qui n’existe pas encore, mais qui t’attend quelque part, plus tard, dans le calendrier.<br><br>
+Alors voilà le marché :<br>
+Tu ne sauras pas tout de suite où tu vas.<br>
+Tu ne sauras pas tout de suite ce qu’on a prévu.<br>
+Tu vas devoir patienter, imaginer, rêver, douter.<br><br>
+Chaque semaine, tu recevras un petit texte.<br>
+Il ne te dira jamais clairement ce qui t’attend.<br>
+Mais certains mots, certains détails, auront un éclat un peu différent des autres.<br>
+Garde-les. Garde tout. Même ce qui te paraît inutile.<br><br>
+Ton cadeau ne commence pas le jour où on part.<br>
+Il commence aujourd’hui.`
+            },
+
+            {
+                id: "e02",
+                date: "2026-07-19T21:00:00",
+                jour: "19", mois: "juil.",
+                typeLabel: "Fragment II",
+                titre: "Là où quelque chose brille",
+                texte: `Il existe des endroits qui ne font pas de bruit,<br>
+qui ne crient pas qu’ils sont beaux,<br>
+qui ne demandent pas qu’on les regarde.<br><br>
+Et pourtant, quand on y est,<br>
+on a l’impression que tout autour de nous <span class="highlight">brille</span> un peu plus que d’habitude.<br>
+Pas comme un feu d’artifice, pas comme un écran,<br>
+mais comme une lumière qui a toujours été là,<br>
+et qu’on n’avait juste jamais vraiment vue.`
+            },
+
+            {
+                id: "e03",
+                date: "2026-07-26T21:00:00",
+                jour: "26", mois: "juil.",
+                typeLabel: "Fragment III",
+                titre: "Tes yeux ne verront plus pareil",
+                texte: `Il y a des jours où on regarde sans voir.<br>
+On passe devant des choses magnifiques,<br>
+mais on pense à autre chose, on est pressé, on est ailleurs.<br><br>
+Et puis il y a ces moments rares<br>
+où tout s’arrête une seconde,<br>
+où tes <span class="highlight">yeux</span> se posent au bon endroit, au bon moment,<br>
+et tu te dis :<br>
+“Comment j’ai pu vivre tout ce temps sans avoir vu ça avant ?”`
+            },
+
+            {
+                id: "e04",
+                date: "2026-08-02T21:00:00",
+                jour: "2", mois: "août",
+                typeLabel: "Fragment IV",
+                titre: "Ce qui semble au milieu n’est pas toujours ce qui compte",
+                texte: `On croit souvent que le centre,<br>
+c’est l’endroit où tout le monde se rassemble,<br>
+là où il y a le plus de bruit, de monde, de lumière.<br><br>
+Mais parfois, le vrai centre d’un moment,<br>
+ce n’est pas <span class="highlight">ce</span> qu’on voit,<br>
+c’est ce qu’on ressent.<br>
+Ce n’est pas le décor,<br>
+c’est la personne avec qui on le regarde.`
+            },
+
+            {
+                id: "e05",
+                date: "2026-08-09T21:00:00",
+                jour: "9", mois: "août",
+                typeLabel: "Fragment V",
+                titre: "Deviner qui a pensé à tout ça",
+                texte: `Il y a des lieux où chaque détail semble avoir été choisi exprès :<br>
+une couleur, une forme, une courbe, une lumière.<br><br>
+On se demande <span class="highlight">qui</span> a eu cette idée,<br>
+qui s’est dit un jour :<br>
+“Et si on construisait quelque chose que les gens viendront voir<br>
+juste pour le plaisir de lever la tête ?”`
+            },
+
+            {
+                id: "e06",
+                date: "2026-08-16T21:00:00",
+                jour: "16", mois: "août",
+                typeLabel: "Fragment VI",
+                titre: "Ce moment précis quand tout s’aligne",
+                texte: `Il y a des instants qui ne ressemblent à rien d’autre.<br>
+Tu ne sais pas pourquoi,<br>
+mais tu sens que tu es exactement à ta place.<br><br>
+Le ciel a la bonne couleur,<br>
+l’air a la bonne température,<br>
+les gens autour ont le bon sourire,<br>
+et toi, tu te dis :<br>
+“Je me souviendrai toujours de <span class="highlight">quand</span> j’ai vécu ça.”`
+            },
+
+            {
+                id: "e07",
+                date: "2026-08-23T21:00:00",
+                jour: "23", mois: "août",
+                typeLabel: "Fragment VII",
+                titre: "Et si c’était tu le centre de la scène ?",
+                texte: `On croit souvent qu’on est juste de passage,<br>
+qu’on regarde la vie des autres,<br>
+qu’on traverse des décors qui ne sont pas faits pour nous.<br><br>
+Mais parfois, tout est préparé pour une seule personne.<br>
+Les surprises, les rires, les détours, les silences.<br>
+Et cette personne, ce jour-là,<br>
+c’est <span class="highlight">tu</span>.<br>
+C’est toi, et personne d’autre.`
+            },
+
+            {
+                id: "e08",
+                date: "2026-08-30T21:00:00",
+                jour: "30", mois: "août",
+                typeLabel: "Fragment VIII",
+                titre: "Là où tu ne peux pas t’empêcher de lèves la tête",
+                texte: `Il existe des endroits où le sol ne suffit plus.<br>
+Tu marches, tu avances,<br>
+mais très vite, tu oublies où tu poses les pieds.<br><br>
+Parce que tout ce qui compte est au-dessus.<br>
+Tu <span class="highlight">lèves</span> la tête, encore, encore, encore,<br>
+comme si le ciel lui-même avait décidé de te raconter une histoire.`
+            },
+
+            {
+                id: "e09",
+                date: "2026-09-06T21:00:00",
+                jour: "6", mois: "sept.",
+                typeLabel: "Fragment IX",
+                titre: "Ce qu’on ne trouve que si on accepte de chercher",
+                texte: `On croit que les trésors sont cachés,<br>
+qu’il faut des cartes, des codes, des clés.<br><br>
+Mais certains trésors sont là,<br>
+au milieu de tout,<br>
+offerts à tout le monde,<br>
+et pourtant, seuls ceux qui prennent le temps de <span class="highlight">chercher</span> vraiment<br>
+les voient comme ils méritent d’être vus.`
+            },
+
+            {
+                id: "e10",
+                date: "2026-09-13T21:00:00",
+                jour: "13", mois: "sept.",
+                typeLabel: "Fragment X",
+                titre: "Pour les autres, ce n’est qu’un décor",
+                texte: `Des milliers de personnes passent chaque jour devant les mêmes choses.<br>
+Pour <span class="highlight">les</span> uns, ce n’est qu’un trajet,<br>
+un endroit qu’on traverse sans y penser.<br><br>
+Pour d’autres, c’est un souvenir qui restera toute une vie.<br>
+La différence ne vient pas du lieu.<br>
+Elle vient du regard qu’on pose dessus.`
+            },
+
+            {
+                id: "e11",
+                date: "2026-09-20T21:00:00",
+                jour: "20", mois: "sept.",
+                typeLabel: "Fragment XI",
+                titre: "Quand tout se reflète dans tes yeux",
+                texte: `Il y a des nuits où la ville devient un ciel à l’envers.<br>
+Les lumières remplacent les étoiles,<br>
+les reflets remplacent les constellations.<br><br>
+Et toi, au milieu de tout ça,<br>
+tu regardes, tu te tais,<br>
+et si quelqu’un te voyait à ce moment-là,<br>
+il verrait la ville entière briller dans tes <span class="highlight">yeux</span>.`
+            },
+
+            {
+                id: "e12",
+                date: "2026-09-27T21:00:00",
+                jour: "27", mois: "sept.",
+                typeLabel: "Fragment XII",
+                titre: "Tu te souviendras de quand tu comprendras",
+                texte: `Peut-être que pour l’instant,<br>
+tout ça n’est qu’une suite de phrases étranges.<br>
+Peut-être que tu as essayé de deviner,<br>
+peut-être que tu as laissé tomber.<br><br>
+Mais un jour très précis,<br>
+tu repenseras à tout ça.<br>
+Et tu te diras :<br>
+“Je me souviens de <span class="highlight">quand</span> j’ai enfin compris.”`
+            },
+
+            {
+                id: "e13",
+                date: "2026-10-04T21:00:00",
+                jour: "4", mois: "oct.",
+                typeLabel: "Fragment XIII",
+                titre: "Ce n’était pas que des mots",
+                texte: `Tu as lu, semaine après semaine,<br>
+des textes qui semblaient flotter dans le vide.<br>
+Tu t’es peut-être demandé s’ils voulaient dire quelque chose,<br>
+ou si on aimait juste te perdre un peu.<br><br>
+Un jour, si tu regardes en arrière,<br>
+si tu relis, si tu observes les détails,<br>
+tu verras que <span class="highlight">ce</span> n’était pas seulement des mots.<br>
+C’était un chemin.`
+            },
+
+            {
+                id: "e14",
+                date: "2026-10-18T21:00:00",
+                jour: "18", mois: "oct.",
+                typeLabel: "Fragment XIV",
+                titre: "Demain, tu lèves les yeux",
+                texte: `Demain, c’est le grand jour.<br>
+Le jour où ce cadeau sort enfin de l’imaginaire<br>
+pour devenir un vrai souvenir.<br><br>
+Tu ne sais pas encore où tu vas,<br>
+mais tu peux déjà savoir comment tu vas y aller :<br>
+avec une tenue confortable,<br>
+avec de bonnes chaussures pour marcher,<br>
+avec un petit sac pour la journée,<br>
+avec ton téléphone bien chargé,<br>
+avec de quoi prendre quelques photos,<br>
+avec ton rire, ta curiosité, ton envie de tout regarder.<br><br>
+Demain, tu comprendras pourquoi on t’a parlé de ce qui <span class="highlight">brille</span>,<br>
+de ce que tu vois quand tu <span class="highlight">lèves</span> la tête,<br>
+de ce qui reste dans tes <span class="highlight">yeux</span> longtemps après.<br><br>
+Demain, tu ne liras plus des mots.<br>
+Demain, tu les vivras.`
+            }
+
+        ];
+
+
+        // ═══════════════════════════════════════════════════
+        let simDate = null, hasNotified = false, adminClicks = 0, clickTimer;
+
+        // ─── Génère les étoiles ────────────────────────────
+        (function makeStars() {
+            const bg = document.getElementById('stars-bg');
+            for (let i = 0; i < 80; i++) {
+                const s = document.createElement('div');
+                s.className = 'star';
+                const size = Math.random() * 2 + 1;
+                s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random() * 100}%;left:${Math.random() * 100}%;--opacity:${(Math.random() * 0.5 + 0.1).toFixed(2)};--dur:${(Math.random() * 4 + 2).toFixed(1)}s;--delay:${(Math.random() * 4).toFixed(1)}s;`;
+                bg.appendChild(s);
+            }
+        })();
+
+        window.onload = function () { initDepartLabel(); routing(); buildList(); };
+        function getNow() { return simDate || new Date(); }
+
+        function routing() {
+            const now = getNow();
+            // Écran anniv uniquement le 22 juin (entre le 22 juin 00h00 et le 23 juin 00h00)
+            const bdayStart = new Date("2026-06-22T00:00:00");
+            const bdayEnd = new Date("2026-06-23T00:00:00");
+
+            if (now >= bdayStart && now < bdayEnd) {
+                document.getElementById('final-screen').style.display = 'flex';
+                document.getElementById('mission-screen').style.display = 'none';
+                confetti({ particleCount: 200, spread: 80, origin: { y: 0.7 }, colors: ['#ff7eb9', '#6a11cb', '#ffffff'] });
+            } else {
+                // Avant le 22 juin OU après le 23 juin → écran mission directement
+                document.getElementById('final-screen').style.display = 'none';
+                document.getElementById('mission-screen').style.display = 'flex';
+            }
+        }
+
+        function switchToMission() {
+            document.getElementById('final-screen').style.display = 'none';
+            document.getElementById('mission-screen').style.display = 'flex';
+            window.scrollTo(0, 0);
+        }
+
+        // ─── Build liste ───────────────────────────────────
+        function buildList() {
+            const list = document.getElementById('puzzles-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            ENIGMES.forEach((e, i) => {
+                list.innerHTML += `
+        <div class="hint-card ${e.alerte ? 'card-alerte' : ''}" id="card-${i}">
+            <div class="card-header">
+                <div class="date-pill">
+                    <span>${e.mois}</span>
+                    <strong>${e.jour}</strong>
+                </div>
+                <div class="card-meta">
+                    <div class="card-type">${e.typeLabel}</div>
+                    <div class="card-title">${e.titre}</div>
+                </div>
+                <div class="card-status" id="status-icon-${i}">
+                    <div class="status-locked">🔒</div>
+                </div>
+            </div>
+            <div class="card-body" id="body-${i}"></div>
+        </div>`;
+            });
+
+            setTimeout(() => {
+                document.querySelectorAll('.hint-card').forEach((c, delay) => {
+                    setTimeout(() => c.classList.add('is-ready'), delay * 60);
+                });
+            }, 100);
+
+            updateUI();
+            setInterval(updateUI, 1000);
+        }
+
+        // ─── Update UI ─────────────────────────────────────
+        function updateUI() {
+            const now = getNow();
+            const target = new Date(DATE_DEPART);
+            let unlocked = 0;
+
+            ENIGMES.forEach((e, i) => {
+                const dc = new Date(e.date);
+                const body = document.getElementById(`body-${i}`);
+                const statusIcon = document.getElementById(`status-icon-${i}`);
+                if (!body) return;
+
+                if (now >= dc) {
+                    unlocked++;
+                    const done = localStorage.getItem('done_' + e.id) === 'true';
+
+                    if (body.dataset.rendered !== '1') {
+                        body.dataset.rendered = '1';
+                        renderEnigme(e, i, done);
+                    }
+
+                    if (statusIcon && done) {
+                        statusIcon.innerHTML = '<div class="status-done">✓</div>';
+                    }
+
+                    if (!done && !hasNotified) {
+                        if (simDate || now.toDateString() === dc.toDateString()) forcePopup();
+                    }
+                } else {
+                    const diff = dc - now;
+                    const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000),
+                        m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+                    if (body.dataset.rendered !== '1') {
+                        body.innerHTML = `
+                <div class="cd-locked">
+                    <div class="cd-locked-icon">⏳</div>
+                    <div class="cd-locked-text">
+                        <span class="cd-locked-label">Se déverrouille dans</span>
+                        <span class="cd-locked-val" id="cdv-${i}">${d}j ${h}h ${m}m ${s}s</span>
+                    </div>
+                </div>`;
+                    } else {
+                        const cdv = document.getElementById(`cdv-${i}`);
+                        if (cdv) cdv.innerText = `${d}j ${h}h ${m}m ${s}s`;
+                    }
+                }
+            });
+
+            // Compte à rebours principal
+            const diff = target - now;
+            if (diff > 0) {
+                document.getElementById('cd-j').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
+                document.getElementById('cd-h').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+                document.getElementById('cd-m').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+                document.getElementById('cd-s').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+            } else {
+                ['cd-j', 'cd-h', 'cd-m', 'cd-s'].forEach(id => document.getElementById(id).innerText = '00');
+            }
+
+            const pct = Math.round((unlocked / ENIGMES.length) * 100);
+            const bar = document.getElementById('progress-bar');
+            const pctEl = document.getElementById('status-pct');
+            if (bar) bar.style.width = pct + '%';
+            if (pctEl) pctEl.innerText = pct + '%';
+        }
+
+        // ─── Render une énigme ─────────────────────────────
+        function renderEnigme(e, i, alreadyDone) {
+            const body = document.getElementById(`body-${i}`);
+            const blurClass = alreadyDone ? '' : 'is-blur';
+            const hintBtn = alreadyDone ? '' : `
+        <div class="unlock-hint" onclick="unlock('${e.id}', ${i}, this)">
+            <span>👁</span> Appuie pour révéler l'indice
+        </div>`;
+
+            body.innerHTML = `
+    <div class="enigme-wrap">
+        <p class="enigme-text ${blurClass}" id="et-${i}" onclick="unlock('${e.id}', ${i}, null)">${e.texte}</p>
+        <div id="hint-btn-${i}">${hintBtn}</div>
+    </div>`;
+        }
+
+        function unlock(id, i, btnEl) {
+            const et = document.getElementById(`et-${i}`);
+            const hintDiv = document.getElementById(`hint-btn-${i}`);
+            if (et && et.classList.contains('is-blur')) {
+                et.classList.remove('is-blur');
+                if (hintDiv) hintDiv.innerHTML = '';
+                localStorage.setItem('done_' + id, 'true');
+                // Met à jour l'icône statut
+                const si = document.getElementById(`status-icon-${i}`);
+                if (si) si.innerHTML = '<div class="status-done">✓</div>';
+                // Son
+                try { document.getElementById('unlock-sound').play(); } catch (e) { }
+            }
+        }
+
+        // ─── Popup ─────────────────────────────────────────
+        function forcePopup() { document.getElementById('mission-popup').style.display = 'flex'; hasNotified = true; }
+        function closePopup() { document.getElementById('mission-popup').style.display = 'none'; }
+
+        // ─── Admin ─────────────────────────────────────────
+        document.getElementById('secret-trigger').addEventListener('click', function () {
+            adminClicks++;
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => adminClicks = 0, 2000);
+            if (adminClicks >= 5) { document.getElementById('admin-panel').style.display = 'block'; adminClicks = 0; }
+        });
+
+        function updateDepartDate() {
+            const val = document.getElementById('depart-date-input').value.trim();
+            if (!val) { alert('⚠️ Format attendu : YYYY-MM-DDTHH:MM:SS'); return; }
+            // Valide le format basique
+            if (isNaN(new Date(val).getTime())) { alert('⚠️ Date invalide. Format : 2026-10-19T06:45:00'); return; }
+            localStorage.setItem('depart_date', val);
+            // Recharge la page pour tout réinitialiser proprement
+            location.reload();
+        }
+
+        function setTestDate() {
+            const v = document.getElementById('test-date').value;
+            if (!v) return;
+            simDate = new Date(v);
+            hasNotified = false;
+            // Réinitialise l'état de rendu de chaque carte
+            ENIGMES.forEach((_, i) => {
+                const b = document.getElementById(`body-${i}`);
+                if (b) { b.dataset.rendered = '0'; b.innerHTML = ''; }
+            });
+            routing();
+            buildList();
+        }
+
+        function resetAll() {
+            if (!confirm('Effacer toute la progression de Nalya ?')) return;
+            localStorage.clear();
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>

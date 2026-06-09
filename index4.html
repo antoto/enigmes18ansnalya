@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>TRANSMISSION PRIORITAIRE</title>
+       
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="PROJET X.28">
+   
+        <link rel="apple-touch-icon" href="icon-final.jpg?v=12">
+        <link rel="icon" type="image/png" href="icon-final.jpg?v=12">
+   
+        <meta property="og:title" content="TRANSMISSION PRIORITAIRE">
+        <meta property="og:description" content="Accès restreint. Initialisation du protocole Nalya-18...">
+        <meta property="og:image" content="icon-final.png">
+   
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #6a11cb;
+            --pink: #ff7eb9;
+            --bg: #0f0c29;
+            --glass: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+        body {
+            background: #000; color: #0f0; font-family: 'Fira Code', monospace;
+            margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; overflow-x: hidden;
+        }
+        /* --- ÉCRAN ANNIVERSAIRE --- */
+        #final-screen {
+            display: none; flex-direction: column; align-items: center;
+            width: 100%; height: 100vh; padding: 60px 20px 40px 20px; box-sizing: border-box;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            overflow-y: auto; text-align: center; z-index: 20;
+            position: fixed; top: 0; left: 0;
+        }
+        .mission-badge {
+            display: inline-block; padding: 5px 15px; border: 1px solid var(--pink);
+            border-radius: 5px; font-family: 'Fira Code', monospace; font-size: 0.7rem;
+            color: var(--pink); text-transform: uppercase; margin-bottom: 15px; letter-spacing: 2px;
+        }
+        .hb-title {
+            font-family: 'Poppins', sans-serif; font-weight: 900; font-size: 3rem;
+            line-height: 0.9; margin: 0; letter-spacing: -2px;
+            background: linear-gradient(to right, #fff, #ccc);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .group-photo-container { margin: 30px 0; position: relative; width: 100%; max-width: 340px; }
+        .group-photo {
+            width: 100%; border-radius: 24px; border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); transform: rotate(-1deg);
+        }
+        .protocol-box {
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px; padding: 25px; margin-bottom: 30px;
+            backdrop-filter: blur(10px); text-align: center; width: 95%; max-width: 400px; box-sizing: border-box;
+        }
+        .personal-note { font-family: 'Poppins', sans-serif; color: #d1d1d1; font-size: 0.9rem; line-height: 1.6; margin: 0; }
+        .personal-note b { color: var(--pink); font-weight: 700; }
+        .btn-mission {
+            background: white; color: black; text-decoration: none; padding: 18px 40px;
+            border-radius: 50px; font-weight: 700; font-family: 'Poppins', sans-serif;
+            text-transform: uppercase; width: 80%; max-width: 300px; cursor: pointer; border: none;
+        }
+        /* --- ÉCRAN CONTENU DE LA MISSION --- */
+        #mission-screen {
+            display: none; flex-direction: column; align-items: center;
+            width: 100%; min-height: 100vh; padding-bottom: 80px; box-sizing: border-box;
+            background: radial-gradient(circle at top right, #302b63, #0f0c29, #24243e);
+            background-attachment: fixed; color: white; font-family: 'Poppins', sans-serif;
+            overflow-y: auto; z-index: 10;
+        }
+        .mission-header {
+            padding: 60px 20px 30px 20px;
+            text-align: center;
+        }
+   
+        .mission-badge-styled {
+            display: inline-block; padding: 6px 18px; border: 1px solid var(--pink);
+            border-radius: 50px; font-family: 'Fira Code', monospace; font-size: 0.65rem;
+            color: var(--pink); text-transform: uppercase; margin-bottom: 15px;
+            letter-spacing: 2px; background: rgba(255, 126, 185, 0.1);
+        }
+   
+        .mission-header h1 {
+            font-size: 2.2rem; font-weight: 800; margin: 0; letter-spacing: -1px;
+            background: linear-gradient(to right, #ffffff, var(--pink));
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase; font-family: 'Poppins', sans-serif;
+        }
+   
+        .progress-wrapper { max-width: 280px; margin: 25px auto 0 auto; }
+        .progress-info { display: flex; justify-content: space-between; font-family: 'Fira Code', monospace; font-size: 0.6rem; margin-bottom: 8px; color: var(--pink); text-transform: uppercase; }
+   
+        .status-container { background: rgba(255,255,255,0.05); height: 4px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .status-bar { width: 0%; height: 100%; background: linear-gradient(to right, var(--accent), var(--pink)); box-shadow: 0 0 20px var(--pink); transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+   
+        .mission-screen-box {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+            border-radius: 24px; padding: 25px; margin: 30px auto; max-width: 450px;
+            backdrop-filter: blur(15px); text-align: left; width: 90%; box-sizing: border-box;
+        }
+        .mission-screen-box h3 { color: white; margin: 0 0 15px 0; font-size: 1rem; font-weight: 700; display: flex; align-items: center; letter-spacing: 1px; }
+        .mission-screen-box h3::before { content: ''; width: 3px; height: 18px; background: var(--pink); margin-right: 10px; border-radius: 5px; box-shadow: 0 0 10px var(--pink); }
+        .protocol-list { padding: 0; list-style: none; font-size: 0.8rem; line-height: 1.7; color: #ccc; }
+        .protocol-list li { margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 8px; }
+   
+        .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 0 20px; box-sizing: border-box; }
+       
+        .hint-card {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid var(--glass-border);
+            border-radius: 22px; padding: 20px; margin-bottom: 20px;
+            display: flex; align-items: center; color: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; transform: translateY(30px);
+            backdrop-filter: blur(10px); text-align: left;
+        }
+        .is-ready { opacity: 1; transform: translateY(0); }
+   
+        .hint-card:hover {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: var(--pink);
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(255, 126, 185, 0.15);
+        }
+   
+        .date-badge {
+            min-width: 65px; height: 65px;
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            color: white; border-radius: 18px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; margin-right: 18px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .date-badge strong { font-size: 1.5rem; line-height: 1; font-weight: 800; }
+        .date-badge span { font-size: 0.6rem; text-transform: uppercase; font-weight: 700; opacity: 0.8; }
+   
+        .hint-content { flex: 1; }
+        .hint-text {
+            font-size: 0.88rem; line-height: 1.5; color: #fff; font-weight: 400;
+            transition: all 0.6s ease;
+        }
+   
+        .is-blur {
+            filter: blur(12px); opacity: 0.2; cursor: pointer; user-select: none;
+            background: linear-gradient(90deg, #fff, var(--pink));
+            -webkit-background-clip: text; background-clip: text;
+        }
+   
+        .countdown-label { font-size: 0.55rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: block; }
+        .countdown-small { font-family: 'Fira Code', monospace; font-size: 0.75rem; color: var(--pink); font-weight: 700; }
+   
+        #mission-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 15, 0.9); backdrop-filter: blur(20px);
+            display: none; align-items: center; justify-content: center; z-index: 9999;
+        }
+        .popup-content {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+            padding: 40px; border-radius: 35px; width: 85%; max-width: 350px; text-align: center;
+        }
+        .popup-btn {
+            background: linear-gradient(to right, #fff, #ddd); color: #000; border: none;
+            padding: 15px 30px; border-radius: 50px; font-weight: 800; margin-top: 20px;
+            cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 1px;
+        }
+   
+        #admin-panel {
+            position: fixed; bottom: 20px; right: 20px; background: white; padding: 15px;
+            border-radius: 20px; display: none; z-index: 10000; color: #333; width: 220px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); font-family: 'Poppins', sans-serif;
+        }
+        .admin-btn { width: 100%; padding: 10px; margin-top: 8px; border: none; border-radius: 10px; cursor: pointer; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .highlight {
+            color: var(--pink);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 126, 185, 0.3);
+        }
+
+        /* Style pour le tuto ajout écran d'accueil */
+        .add-to-home {
+            background: rgba(255,126,185,0.1);
+            border: 1px solid var(--pink);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 18px;
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+        .add-to-home strong {
+            color: var(--pink);
+        }
+    </style>
+</head>
+<body>
+    <audio id="unlock-sound" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3"></audio>
+    <div id="mission-popup">
+        <div class="popup-content">
+            <div style="font-size: 3rem; margin-bottom: 15px;">⏳</div>
+            <div style="font-weight: 700; color: white; margin-bottom: 10px; text-transform: uppercase;">Alerte Mission</div>
+            <p style="font-size: 0.9rem; color: #ccc;">Un nouveau fragment vient de se débloquer.</p>
+            <button class="popup-btn" onclick="closePopup()">Découvrir</button>
+        </div>
+    </div>
+    <div id="final-screen">
+        <div class="mission-badge">Accès Autorisé</div>
+        <h1 class="hb-title">JOYEUX<br>18 ANS !</h1>
+        <div class="group-photo-container"><img src="photogroupe.JPG" class="group-photo"></div>
+        <div class="protocol-box">
+            <p class="personal-note">
+                Certaines portes ne s'ouvrent qu'une fois. <br><br>
+                Le seuil des 18 ans est franchi, mais l'accès à ce qui t'est destiné reste suspendu. Ce qui t'attend n'est pas un simple présent, c'est une récompense qui exige de la persévérance.<br><br>
+                <b>Nalya</b>, le compte à rebours a commencé. Sauras-tu déchiffrer ce que le futur te réserve ou resteras-tu à la porte ?
+            </p>
+        </div>
+        <button class="btn-mission" onclick="switchToMission()">Démarrer la mission</button>
+    </div>
+    <div id="mission-screen">
+        <header class="mission-header">
+            <div class="mission-badge-styled">Ton cadeau commence ici 🤫</div>
+            <h1>IL N’Y A PAS DE RETOUR EN ARRIÈRE</h1>
+            <div style="font-size: 0.9rem; opacity: 0.6; margin-top: 5px; letter-spacing: 2px;">NALYA-2026</div>
+           
+            <div class="progress-wrapper">
+                <div class="progress-info">
+                    <span id="departure-timer">Calcul...</span>
+                    <span id="status-percent">0%</span>
+                </div>
+                <div class="status-container">
+                    <div class="status-bar" id="status-bar"></div>
+                </div>
+            </div>
+        </header>
+        <div class="container">
+            <div class="mission-screen-box">
+                <h3>📋 NOTE DE MISSION À LIRE ATTENTIVEMENT :</h3>
+                <ul class="protocol-list">
+                    <li><b>Nalya</b>, ce lien est ton seul guide. Voici les règles de l'opération :</li>
+                    <li>• <b>Bloque ta journée :</b> Le <b>28 JUILLET</b> t'appartient entièrement. Ne prévois rien d'autre, de l'aube jusqu'au crépuscule.</li>
+                    <li>• <b>Un jour, un fragment :</b> Chaque jour, une nouvelle case s'active. Clique sur le flou pour voir l'indice.</li>
+                    <li>• <b>Le Dress Code :</b> Prépare une tenue où tu te trouves <b>magnifique</b> (il y aura des photos !), mais attention : tes chaussures doivent être tes meilleures alliées. Le confort est l'unique clé de cette journée.</li>
+                    <li>• <b>Le Secret :</b> N'essaie pas de deviner. Même le matin du départ, le mystère restera entier. Laisse-toi simplement porter.</li>
+                    
+                    <!-- Remplacement du conseil par le tuto -->
+                    <li style="margin-top: 25px; color: var(--pink); font-size: 0.8rem; text-align: center; list-style: none;">
+                        <strong>CONSEIL IMPORTANT :</strong> Ajoute cette page à ton écran d'accueil pour ne rien manquer des fragments quotidiens.
+                    </li>
+                </ul>
+
+                <!-- Tuto Ajouter à l'écran d'accueil -->
+                <div class="add-to-home">
+                    <strong>Comment faire :</strong><br><br>
+                    <strong>Sur iPhone / iPad :</strong><br>
+                    1. Appuie sur le bouton <strong>Partager</strong> (📤) en bas de l'écran<br>
+                    2. Descends et choisis <strong>Sur l'écran d'accueil</strong><br>
+                    3. Appuie sur <strong>Ajouter</strong><br><br>
+                </div>
+            </div>
+            <div id="puzzles-list"></div>
+        </div>
+        <div id="secret-trigger" style="text-align:center; padding:40px; opacity:0.01; cursor: pointer; user-select: none;">
+            Accès restreint
+        </div>
+        <div id="admin-panel">
+            <div onclick="this.parentElement.style.display='none'" style="cursor:pointer; text-align:right; font-weight:bold;">✕</div>
+            <p style="font-size: 0.7rem; margin-bottom: 5px;">Simulateur Temporel</p>
+            <input type="datetime-local" id="test-date" style="width:100%; padding: 5px; box-sizing: border-box;">
+            <button class="admin-btn" style="background:var(--accent); color:white;" onclick="setTestDate()">Voyager</button>
+            <button class="admin-btn" onclick="localStorage.clear(); location.reload();">Reset Progression</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        // Liste des énigmes mise à jour (10 énigmes au total, s'arrêtant au 27 juillet)
+        const MES_ENIGMES = [
+            { date: "2026-07-18T19:00:00", texte: "On peut remplir un vide avant même qu'il ne soit creusé. Ne regarde pas là où je suis, mais là où <span class='highlight'>je ne devrais être</span>." },
+            { date: "2026-07-19T08:30:00", texte: "Le décompte s'arrête là où la trajectoire finit. Ce n'est pas une arrivée, c'est une <span class='highlight'>évidence</span> qui reprend sa place. Rendez-vous à 11h avec ta première surprise." },
+            { date: "2026-07-20T10:00:00", texte: "Je suis un lieu français,<br>Très important pendant la <span class='highlight'>Seconde Guerre mondiale</span>.<br>Mon sol a <span class='highlight'>tremblé,</span><br>Mon histoire à <span class='highlight'>changé le monde,</span><br>Et ma mémoire n'a jamais <span class='highlight'>quitté les livres.</span><br><span class='highlight'>Qui suis-je ?</span>" },
+            { date: "2026-07-21T10:00:00", texte: "<span class='highlight'>Toute ton enfance</span> est réunie dans ce lieu. <br> <span class='highlight'>Les rêves</span> y marchent,<br> <span class='highlight'>Les héros</span> y parlent,<br><span class='highlight'>Et les souvenirs</span> y rient encore.<br>Où ton regard d'enfant n'a-t-il <span class='highlight'>jamais vraiment grandi ?</span>" },
+            { date: "2026-07-22T10:00:00", texte: "La flamme est arrivée <span class='highlight'>par bateau</span> là-bas.<br>Elle n'est pas née ici,<br>Mais elle y a été accueillie,<br>Portée par <span class='highlight'>l'eau</span> avant d'embrasser la terre.<br>Quel lieu a vu la flamme poser pied <span class='highlight'>après la mer ?</span>" },
+            { date: "2026-07-23T10:00:00", texte: "Je suis un lieu hors du présent. Ni passé, ni maintenant, je regarde devant quand les autres regardent autour. Où va-t-on quand on quitte le <span class='highlight'>temps sans quitter la France</span> ?" },
+            { date: "2026-07-24T10:00:00", texte: "Le président se repose dans ce lieu. Ce n'est pas son bureau, ce n'est pas le pouvoir, mais l'endroit où même les <span class='highlight'>décisions se taisent</span>. Où le chef de l'État pose-t-il sa fatigue ?" },
+            { date: "2026-07-25T18:00:00", texte: "Je suis un lieu rempli de <span class='highlight'>mignonnerie.</span><br>On y sourit sans raison,<br>On y parle doucement<br>Et <span class='highlight'>les yeux brillent</span> plus que les mots.<br>Où la tendresse a-t-elle élu domicile ?" },
+            { date: "2026-07-26T21:00:00", texte: "Je suis un lieu de spectacles historiques nombreux.<br>La passé y joue au présent,<br>Les siècles montent sur scène,<br>Et <span class='highlight'>l'histoire ne se lit plus...elle se regarde.</span><br>Quel lieu fait <span class='highlight'>revivre ce qui n'est plus ?</span>" },
+            { date: "2026-07-27T10:00:00", texte: "Prépare ton plus beau sourire et ta tenue de fête, mais sois prête pour un <span class='highlight'>long voyage</span>. Le départ est fixé à 06h45. Nous allons rouler des heures vers un horizon que tu ne soupçonnes pas, là où la beauté du décor n'aura d'égale que la tienne." }
+        ];
+        const DATE_DEPART_FINALE = "2026-07-28T06:45:00";
+        let simDate = null;
+        let hasNotified = false;
+        let adminClicks = 0;
+        let clickTimer;
+        window.onload = function() {
+            checkDateRouting();
+            init();
+        };
+        // Gère l'affichage automatique selon la date
+        function checkDateRouting() {
+            const now = simDate || new Date();
+            const limitDate = new Date("2026-07-19T00:00:00");
+            if (now < limitDate) {
+                // Le 18 Juillet : On affiche l'écran anniversaire
+                document.getElementById('final-screen').style.display = 'flex';
+                document.getElementById('mission-screen').style.display = 'none';
+               
+                // Lancement des confettis spécial anniversaire
+                confetti({
+                    particleCount: 200,
+                    spread: 80,
+                    origin: { y: 0.7 },
+                    colors: ['#ff7eb9', '#6a11cb', '#ffffff']
+                });
+            } else {
+                // Dès le 19 Juillet : On bascule direct sur la mission sans voir l'écran 18 ans
+                document.getElementById('final-screen').style.display = 'none';
+                document.getElementById('mission-screen').style.display = 'flex';
+            }
+        }
+        function switchToMission() {
+            document.getElementById('final-screen').style.display = 'none';
+            document.getElementById('mission-screen').style.display = 'flex';
+            window.scrollTo(0, 0);
+        }
+        // Clic secret pour l'admin panel
+        document.getElementById('secret-trigger').addEventListener('click', function() {
+            adminClicks++;
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => { adminClicks = 0; }, 2000);
+            if (adminClicks >= 5) {
+                document.getElementById('admin-panel').style.display = 'block';
+                adminClicks = 0;
+            }
+        });
+        function init() {
+            const list = document.getElementById('puzzles-list');
+            if(!list) return;
+            list.innerHTML = "";
+            MES_ENIGMES.forEach((e, i) => {
+                const d = new Date(e.date);
+                list.innerHTML += `
+                    <div class="hint-card" id="card-${i}">
+                        <div class="date-badge">
+                            <span>${d.toLocaleString('fr-FR',{month:'short'})}</span>
+                            <strong>${d.getDate()}</strong>
+                        </div>
+                        <div class="hint-content" id="content-${i}"></div>
+                    </div>`;
+            });
+            setTimeout(() => {
+                document.querySelectorAll('.hint-card').forEach(c => c.classList.add('is-ready'));
+            }, 100);
+            updateUI();
+            setInterval(updateUI, 1000);
+        }
+        function updateUI() {
+            const now = simDate || new Date();
+            const targetDeparture = new Date(DATE_DEPART_FINALE);
+            let unlockedCount = 0;
+            MES_ENIGMES.forEach((e, i) => {
+                const dateCible = new Date(e.date);
+                const cont = document.getElementById(`content-${i}`);
+                if(!cont) return;
+                if (now >= dateCible) {
+                    const isRevealed = localStorage.getItem('enigme_'+e.date) === 'true';
+                    if (isRevealed) unlockedCount++;
+                    if (!cont.querySelector('.hint-text')) {
+                        cont.innerHTML = `<div class="hint-text ${isRevealed ? '' : 'is-blur'}" onclick="reveal('${e.date}', this)">${e.texte}</div>`;
+                    }
+                   
+                    if (!isRevealed && !hasNotified && (simDate || now.toDateString() === dateCible.toDateString())) {
+                        forcePopup();
+                    }
+                } else {
+                    const diff = dateCible - now;
+                    const d = Math.floor(diff / 86400000);
+                    const h = Math.floor((diff % 86400000) / 3600000);
+                    const m = Math.floor((diff % 3600000) / 60000);
+                    const s = Math.floor((diff % 60000) / 1000);
+                    cont.innerHTML = `
+                        <span class="countdown-label">Se déverrouille dans :</span>
+                        <div class="countdown-small">${d}j ${h}h ${m}m ${s}s</div>
+                    `;
+                }
+            });
+            const diffDep = targetDeparture - now;
+            const timerEl = document.getElementById('departure-timer');
+            if (timerEl) {
+                if (diffDep > 0) {
+                    const dJ = Math.floor(diffDep / 86400000);
+                    const dH = Math.floor((diffDep % 86400000) / 3600000);
+                    const dM = Math.floor((diffDep % 3600000) / 60000);
+                    const dS = Math.floor((diffDep % 60000) / 1000);
+                    timerEl.innerText = `Départ dans ${dJ}j ${dH}h ${dM}m ${dS}s`;
+                } else {
+                    timerEl.innerText = "L'aventure commence.";
+                }
+            }
+            const progress = Math.round((unlockedCount / MES_ENIGMES.length) * 100);
+            const bar = document.getElementById('status-bar');
+            const per = document.getElementById('status-percent');
+            if(bar) bar.style.width = progress + "%";
+            if(per) per.innerText = progress + "%";
+        }
+        function reveal(id, el) {
+            if (el.classList.contains('is-blur')) {
+                el.classList.remove('is-blur');
+                localStorage.setItem('enigme_'+id, 'true');
+                document.getElementById('unlock-sound').play().catch(()=>{});
+                setTimeout(updateUI, 500);
+            }
+        }
+        function closePopup() { document.getElementById('mission-popup').style.display = 'none'; }
+        function forcePopup() { document.getElementById('mission-popup').style.display = 'flex'; hasNotified = true; }
+       
+        function setTestDate() {
+            const v = document.getElementById('test-date').value;
+            if(v) {
+                simDate = new Date(v);
+                hasNotified = false;
+                checkDateRouting(); // Recalcule l'écran à afficher selon la date simulée
+                updateUI();
+            }
+        }
+    </script>
+</body>
+</html>

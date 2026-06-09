@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM_CONTROL_N18</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --pink: #ff7eb9; --purple: #764ba2; --dark: #0a0a0c; --neon: #00ff41; --alert: #ff003c;
+            --gradient: linear-gradient(135deg, #ff7eb9 0%, #764ba2 100%); 
+        }
+
+        body { font-family: 'Poppins', sans-serif; background: #0f0f12; margin: 0; color: #e0e0e0; overflow-x: hidden; }
+        .hero { background: var(--gradient); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; cursor: pointer; }
+        .container { max-width: 500px; margin: -30px auto 50px; padding: 0 15px; }
+        .card { background: #16161a; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 25px; border: 1px solid #222; }
+        
+        .cctv-container { position: relative; border-radius: 15px; overflow: hidden; margin-bottom: 15px; background: #000; border: 2px solid #333; height: 280px; }
+        .cctv-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1) contrast(1.2) brightness(0.6); z-index: 1; position: relative; }
+        
+        /* CACHE TOTAL (Avant le 18) */
+        #black-out {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 50; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; color: #333; font-family: 'Fira Code';
+        }
+
+        .blurred { filter: grayscale(1) contrast(1.2) brightness(0.4) blur(20px) !important; }
+
+        #data-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            font-family: 'Fira Code', monospace; color: var(--neon); font-size: 13px;
+            padding: 15px; pointer-events: none; display: none; z-index: 100;
+            text-shadow: 0 0 8px rgba(0, 255, 65, 0.6); line-height: 1.2; word-break: break-all;
+        }
+
+        .live-timer {
+            position: absolute; bottom: 10px; right: 15px;
+            color: var(--alert); font-family: 'Fira Code', monospace;
+            font-weight: bold; font-size: 14px; z-index: 105;
+        }
+
+        .scanner-line {
+            position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--alert); box-shadow: 0 0 20px var(--alert); 
+            z-index: 101; animation: scan 2s linear infinite; display: none;
+        }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+        .flash { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; z-index: 200; pointer-events: none; }
+        .flash-active { animation: flash-anim 0.5s ease-out; }
+        @keyframes flash-anim { 0% { opacity: 0.8; } 100% { opacity: 0; } }
+
+        .status-box { background: #000; color: var(--neon); padding: 15px; border-radius: 12px; font-family: 'Fira Code', monospace; font-size: 0.75rem; border: 1px solid #00ff4133; min-height: 50px; }
+        .btn-action { background: transparent; color: var(--neon); border: 1px solid var(--neon); padding: 15px; border-radius: 10px; cursor: pointer; width: 100%; font-family: 'Fira Code'; font-size: 0.8rem; margin-top: 15px; font-weight: bold; text-transform: uppercase; display: none; }
+
+        .day-row { display: flex; padding: 15px 0; border-bottom: 1px solid #222; align-items: center; }
+        .day-num { min-width: 65px; font-weight: 600; color: var(--pink); font-size: 0.75rem; }
+        .day-msg { flex: 1; font-size: 0.75rem; color: #aaa; line-height: 1.4; }
+        .locked { filter: blur(5px); opacity: 0.2; }
+        .glitch-text { color: var(--alert); font-weight: bold; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        #admin-panel {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #222; 
+            padding: 20px; border-top: 2px solid var(--neon); z-index: 999;
+            display: none; box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero" onclick="checkAdminClick()">
+    <h1 id="main-title" style="margin:0; font-size:1.4rem; letter-spacing:3px;">SYSTEM_CONTROL_N18</h1>
+    <p style="opacity:0.7; font-size:0.7rem;" id="header-status">SYNCHRONISATION_SATELLITE...</p>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="cctv-container">
+            <div id="black-out">
+                <div style="font-size: 10px;">[ SIGNAL_LOST ]</div>
+                <div style="font-size: 8px; margin-top: 5px;">RE-ESTABLISHING...</div>
+            </div>
+            <div id="flash-layer" class="flash"></div>
+            <div class="live-timer" id="timer">00:00:00:00</div>
+            <img src="cam_station.png" id="cctv-target" class="cctv-img">
+            <div id="data-overlay"></div>
+            <div id="scanner" class="scanner-line"></div>
+            <div style="position:absolute; bottom:10px; left:10px; color:var(--neon); font-family:'Fira Code'; font-size:9px; z-index:102;">REC ● LIVE // CAM_04</div>
+        </div>
+        <div class="status-box" id="tracker-text">> Initialisation...</div>
+        <button id="unlock-btn" class="btn-action" onclick="stabilize()">STABILISER LE FLUX</button>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top:0; font-size:0.8rem; color:var(--pink);">REGISTRE D'INDICES // MISSION PARIS</h3>
+        <div id="puzzles-container"></div>
+    </div>
+</div>
+
+<div id="admin-panel">
+    <div style="color:var(--neon); font-family:'Fira Code'; font-size:12px; margin-bottom:10px;">🔧 MODE ADMIN</div>
+    <input type="date" id="admin-date-input" style="width:100%; padding:10px; margin-bottom:10px;">
+    <button onclick="applyAdminDate()" style="width:100%; padding:10px; background:var(--neon); border:none; color:#000; font-weight:bold; margin-bottom:5px;">APPLIQUER LA DATE</button>
+    <button onclick="resetAdminDate()" style="width:100%; padding:10px; background:#444; border:none; color:#fff;">RESET</button>
+</div>
+
+<script>
+    let overrideDate = null;
+    let clickCount = 0;
+    let lastClick = 0;
+
+    function checkAdminClick() {
+        const now = Date.now();
+        if (now - lastClick < 500) clickCount++;
+        else clickCount = 1;
+        lastClick = now;
+        if (clickCount >= 5) {
+            document.getElementById('admin-panel').style.display = 'block';
+            clickCount = 0;
+        }
+    }
+
+    function applyAdminDate() {
+        const val = document.getElementById('admin-date-input').value;
+        if (val) {
+            overrideDate = new Date(val + "T10:00:00");
+            initSite();
+        }
+    }
+
+    function resetAdminDate() {
+        overrideDate = null;
+        document.getElementById('admin-panel').style.display = 'none';
+        initSite();
+    }
+
+    function initSite() {
+        const now = overrideDate || new Date();
+        const d = now.getDate();
+        const m = now.getMonth();
+        
+        const img = document.getElementById('cctv-target');
+        const btn = document.getElementById('unlock-btn');
+        const log = document.getElementById('tracker-text');
+        const header = document.getElementById('header-status');
+        const scanner = document.getElementById('scanner');
+        const blackout = document.getElementById('black-out');
+
+        // RESET PAR DEFAUT
+        img.classList.remove('blurred');
+        btn.style.display = "none";
+        scanner.style.display = "none";
+        blackout.style.display = "none";
+        header.innerHTML = "SIGNAL_STABLE // ACCESS_GRANTED";
+
+        // LOGIQUE DYNAMIQUE
+        if (m === 6 && d === 18) {
+            // LE 18 JUILLET : FLOU + BOUTON
+            img.classList.add('blurred');
+            btn.style.display = "block";
+            log.innerHTML = "> SIGNAL INSTABLE. Veuillez stabiliser.";
+            header.innerHTML = "SYNCHRONISATION_SATELLITE...";
+        } 
+        else if (m === 6 && d === 19) {
+            // LE 19 JUILLET : INFO TRAIN
+            log.innerHTML = "> <span class='glitch-text'>ALERTE : RUPTURE DE TRAJECTOIRE</span><br>> GARE YVETOT // 11:25<br>> <span class='glitch-text'>INTERCEPTION : QUAI 1</span>";
+            scanner.style.display = "block";
+        }
+        else if (m < 6 || (m === 6 && d < 18)) {
+            // AVANT LE 18 : CACHE NOIR TOTAL
+            blackout.style.display = "flex";
+            log.innerHTML = "> SYSTÈME EN VEILLE.<br>> EN ATTENTE DU SIGNAL DU 18 JUILLET.";
+            header.innerHTML = "SYSTEM_IDLE // STANDBY";
+        }
+        else {
+            log.innerHTML = "> PROTOCOLE TERMINÉ.";
+        }
+
+        const hints = [
+            { d: 20, m: "Le squelette de 7000 tonnes respire à travers 2,5 millions de rivets." },
+            { d: 21, m: "L'ombre du géant indique une direction que seul le soleil connaît." },
+            { d: 22, m: "La pierre chante là où le funiculaire s'arrête." },
+            { d: 23, m: "L'altitude modifie le rythme cardiaque." },
+            { d: 24, m: "Douze pointes pour une couronne de bitume." },
+            { d: 25, m: "Cherche la rue arc-en-ciel." },
+            { d: 26, m: "06h45 : Déchirure de l'espace-temps." },
+            { d: 27, m: "18 ans + 300 mètres = Souvenir." },
+            { d: 28, m: "CODE : FATAL_ERROR" }
+        ];
+
+        const container = document.getElementById('puzzles-container');
+        container.innerHTML = "";
+        hints.forEach(h => {
+            const active = (now.getMonth() > 6) || (now.getMonth() === 6 && now.getDate() >= h.d);
+            container.innerHTML += `<div class="day-row"><div class="day-num">${h.d} JUIL.</div><div class="day-msg ${active ? '' : 'locked'}">${active ? h.m : "Séquence verrouillée..."}</div></div>`;
+        });
+    }
+
+    function stabilize() {
+        const btn = document.getElementById('unlock-btn');
+        const scanner = document.getElementById('scanner');
+        const overlay = document.getElementById('data-overlay');
+        const img = document.getElementById('cctv-target');
+        const log = document.getElementById('tracker-text');
+
+        btn.disabled = true; btn.innerHTML = "DÉCRYPTAGE...";
+        scanner.style.display = "block"; overlay.style.display = "block";
+        
+        const interval = setInterval(() => {
+            overlay.innerHTML = Array.from({length: 15}, () => Math.random().toString(36).substring(2, 10).toUpperCase()).join(' ');
+            img.style.transform = `translate(${Math.random() * 8 - 4}px, ${Math.random() * 8 - 4}px)`;
+        }, 80);
+
+        setTimeout(() => {
+            clearInterval(interval);
+            overlay.style.display = "none";
+            document.getElementById('flash-layer').classList.add('flash-active');
+            img.classList.remove('blurred');
+            img.style.transform = "none"; btn.style.display = "none";
+            log.innerHTML = "> ANALYSE TERMINÉE.<br>> CIBLE : NON IDENTIFIÉE.<br>> LOCALISATION : GARE DE LILLE.<br>> STATUT : En transit vers Yvetot.";
+        }, 3000);
+    }
+
+    setInterval(() => {
+        const d = new Date();
+        document.getElementById('timer').innerHTML = d.toLocaleTimeString('fr-FR') + ":" + Math.floor(d.getMilliseconds()/10);
+    }, 50);
+
+    initSite();
+</script>
+</body>
+</html>
