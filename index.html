@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OPÉRATION 06:45">
+
+<title>OPÉRATION 06:45 — DOSSIER CONFIDENTIEL</title>
+
+<link rel="apple-touch-icon" href="iconeenigmes.png?v=12">
+<link rel="icon" type="image/png" href="iconeenigmes.png?v=12">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   VARIABLES & RESET
+   ============================================================ */
+:root {
+  --noir: #080604;
+  --noir-soft: #120d09;
+  --brun: #1e1009;
+  --brun-mid: #3a1f0d;
+  --brun-light: #5c3318;
+  --or: #c9a84c;
+  --or-light: #e8c96a;
+  --or-pale: #f0dfa0;
+  --or-dim: #7a6030;
+  --rouge: #8b0000;
+  --rouge-bright: #b30000;
+  --creme: #f2e8d5;
+  --creme-dark: #d4c4a0;
+  --creme-dim: #a0906c;
+  --blanc: #faf6ee;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--noir);
+  color: var(--creme);
+  font-family: 'Special Elite', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ============================================================
+   TEXTURE DE FOND GLOBAL
+   ============================================================ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ============================================================
+   LOADING SCREEN
+   ============================================================ */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--noir);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+.loading-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 5vw, 2.2rem);
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: var(--or);
+  text-transform: uppercase;
+}
+.loading-bar-wrap {
+  width: 200px;
+  height: 2px;
+  background: var(--brun-mid);
+  position: relative;
+  overflow: hidden;
+}
+.loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--or-dim), var(--or), var(--or-light));
+  width: 0%;
+  animation: loadbar 2s ease forwards;
+}
+@keyframes loadbar {
+  to { width: 100%; }
+}
+.loading-text {
+  font-family: 'Special Elite', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--or-dim);
+  text-transform: uppercase;
+  animation: blink 1s ease infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ============================================================
+   STAMP OVERLAY (signature animée)
+   ============================================================ */
+#stamp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 8888;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stamp-svg {
+  width: min(280px, 70vw);
+  opacity: 0;
+  transform: rotate(-18deg) scale(2);
+  animation: stampDrop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 2.4s forwards;
+  filter: drop-shadow(0 0 20px rgba(139,0,0,0.6));
+}
+@keyframes stampDrop {
+  0%  { opacity: 0; transform: rotate(-18deg) scale(2); }
+  60% { opacity: 0.95; transform: rotate(-18deg) scale(0.9); }
+  80% { opacity: 0.9; transform: rotate(-18deg) scale(1.05); }
+  100%{ opacity: 0; transform: rotate(-18deg) scale(1); }
+}
+
+/* ============================================================
+   VIGNETTE & SCANLINES
+   ============================================================ */
+.vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.scanlines {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+header {
+  position: relative;
+  z-index: 10;
+  padding: 3rem 1.5rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid var(--brun-mid);
+  background: linear-gradient(180deg, rgba(30,16,9,0.8) 0%, transparent 100%);
+}
+.header-eyebrow {
+  font-family: 'Special Elite', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  color: var(--or-dim);
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 9vw, 5rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: var(--or);
+  text-transform: uppercase;
+  line-height: 1;
+  position: relative;
+  display: inline-block;
+}
+.header-title::after {
+  content: '';
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--or), transparent);
+  margin-top: 0.4rem;
+}
+.header-sub {
+  font-family: 'Special Elite', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  color: var(--creme-dim);
+  text-transform: uppercase;
+  margin-top: 0.6rem;
+}
+.classified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.2rem;
+  padding: 0.3rem 1rem;
+  border: 1px solid var(--rouge);
+  color: var(--rouge-bright);
+  font-family: 'Special Elite', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.classified-badge::before,
+.classified-badge::after {
+  content: '◆';
+  font-size: 0.5rem;
+}
+
+/* ============================================================
+   SECTIONS COMMUNES
+   ============================================================ */
+section {
+  position: relative;
+  z-index: 10;
+  padding: 2rem 1.2rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.section-label {
+  font-family: 'Special Elite', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  color: var(--or-dim);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.section-label::before {
+  content: '▶';
+  color: var(--rouge);
+  font-size: 0.5rem;
+}
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--brun-light), var(--or-dim), var(--brun-light), transparent);
+  margin: 1.5rem 0;
+  opacity: 0.6;
+}
+
+/* ============================================================
+   SECTION PROTOCOLE
+   ============================================================ */
+.protocole-card {
+  background: linear-gradient(135deg, rgba(30,16,9,0.95) 0%, rgba(18,13,9,0.95) 100%);
+  border: 1px solid var(--brun-light);
+  border-left: 3px solid var(--or);
+  padding: 1.8rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.protocole-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.protocole-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--or);
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+.protocole-text {
+  font-family: 'Special Elite', serif;
+  font-size: 0.85rem;
+  line-height: 1.9;
+  color: var(--creme-dark);
+  margin-bottom: 1rem;
+}
+.protocole-name {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--or-light);
+  margin-top: 0.5rem;
+}
+
+.info-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.info-block {
+  background: rgba(30,16,9,0.6);
+  border: 1px solid var(--brun-mid);
+  border-left: 2px solid var(--or-dim);
+  padding: 1rem 1.2rem;
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+}
+.info-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.info-content {}
+.info-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--or);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3rem;
+}
+.info-desc {
+  font-family: 'Special Elite', serif;
+  font-size: 0.78rem;
+  color: var(--creme-dark);
+  line-height: 1.7;
+}
+.info-block.highlight {
+  border-left-color: var(--rouge);
+  background: rgba(139,0,0,0.05);
+}
+.info-block.highlight .info-title {
+  color: #e86060;
+}
+
+/* ============================================================
+   COMPTE À REBOURS GLOBAL
+   ============================================================ */
+.countdown-section {
+  background: linear-gradient(135deg, rgba(18,8,4,0.98) 0%, rgba(10,7,4,0.98) 100%);
+  border: 1px solid var(--brun-light);
+  padding: 2rem 1.2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.countdown-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 20px,
+    rgba(201,168,76,0.015) 20px,
+    rgba(201,168,76,0.015) 21px
+  );
+  pointer-events: none;
+}
+.countdown-label {
+  font-family: 'Special Elite', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  color: var(--rouge-bright);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.countdown-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--or);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.countdown-grid {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  flex-wrap: nowrap;
+}
+.countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 60px;
+}
+.countdown-number {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-weight: 900;
+  color: var(--or-light);
+  line-height: 1;
+  background: rgba(201,168,76,0.06);
+  border: 1px solid var(--or-dim);
+  padding: 0.4rem 0.6rem;
+  min-width: 70px;
+  text-align: center;
+  position: relative;
+}
+.countdown-number::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(201,168,76,0.15);
+}
+.countdown-unit-label {
+  font-family: 'Special Elite', serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.25em;
+  color: var(--or-dim);
+  text-transform: uppercase;
+}
+.countdown-sep {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: var(--or-dim);
+  align-self: center;
+  margin-top: -0.5rem;
+}
+
+/* ============================================================
+   POLAROIDS
+   ============================================================ */
+.polaroids-section {
+  padding: 1.5rem 0.5rem;
+}
+.polaroids-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem 1rem;
+  padding: 0 0.5rem;
+}
+.polaroid-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.polaroid-wrap:nth-child(odd)  { transform: rotate(-2.5deg); }
+.polaroid-wrap:nth-child(even) { transform: rotate(2deg); }
+.polaroid-wrap:nth-child(3)    { transform: rotate(-1deg); }
+.polaroid-wrap:nth-child(4)    { transform: rotate(3.5deg); }
+
+.thumbtack {
+  width: 20px;
+  height: 20px;
+  z-index: 5;
+  margin-bottom: -10px;
+}
+.thumbtack circle.head { fill: #c0392b; stroke: #7b241c; stroke-width: 1; }
+.thumbtack circle.shine { fill: rgba(255,255,255,0.35); }
+.thumbtack ellipse.shadow { fill: rgba(0,0,0,0.4); }
+
+.polaroid {
+  background: #f5f0e8;
+  padding: 0.5rem 0.5rem 0;
+  box-shadow:
+    0 4px 15px rgba(0,0,0,0.7),
+    0 1px 3px rgba(0,0,0,0.5),
+    inset 0 0 0 1px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 170px;
+  position: relative;
+}
+.polaroid-img-wrap {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #2a2a2a;
+  overflow: hidden;
+  position: relative;
+}
+.polaroid-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.polaroid-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, #1a0e06, #2d1a0a);
+}
+.polaroid-placeholder-icon {
+  font-size: 1.8rem;
+  opacity: 0.4;
+  color: var(--or-dim);
+}
+.polaroid-placeholder-text {
+  font-family: 'Special Elite', serif;
+  font-size: 0.45rem;
+  letter-spacing: 0.2em;
+  color: var(--or-dim);
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+.polaroid-note {
+  padding: 0.5rem 0.3rem 0.7rem;
+  text-align: center;
+  font-family: 'Special Elite', serif;
+  font-size: 0.65rem;
+  color: #3a2010;
+  line-height: 1.4;
+  min-height: 2.2rem;
+}
+
+/* ============================================================
+   INSTRUCTIONS iOS
+   ============================================================ */
+.ios-card {
+  background: rgba(18,10,5,0.9);
+  border: 1px solid var(--brun-light);
+  padding: 1.5rem;
+  position: relative;
+}
+.ios-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--or);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.ios-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.ios-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+.ios-step-num {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--or-dim);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Special Elite', serif;
+  font-size: 0.6rem;
+  color: var(--or);
+  flex-shrink: 0;
+}
+.ios-step-text {
+  font-family: 'Special Elite', serif;
+  font-size: 0.78rem;
+  color: var(--creme-dark);
+  line-height: 1.6;
+  padding-top: 0.1rem;
+}
+
+/* ============================================================
+   ÉNIGMES
+   ============================================================ */
+.enigmes-header {
+  text-align: center;
+  padding: 2rem 1.2rem 1rem;
+}
+.enigmes-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 5vw, 2.2rem);
+  font-weight: 900;
+  color: var(--or);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.enigmes-subtitle {
+  font-family: 'Special Elite', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: var(--or-dim);
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+.enigmes-count {
+  display: inline-block;
+  background: var(--rouge);
+  color: #fff;
+  font-family: 'Special Elite', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  padding: 0.2rem 0.8rem;
+  margin-top: 0.8rem;
+  text-transform: uppercase;
+}
+
+.enigmes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0 1rem 3rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.enigme-card {
+  background: linear-gradient(135deg, rgba(22,12,6,0.97) 0%, rgba(14,8,4,0.97) 100%);
+  border: 1px solid var(--brun-mid);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.4s ease;
+}
+.enigme-card.unlocked {
+  border-color: var(--or-dim);
+  animation: unlockGlow 1.5s ease forwards;
+}
+@keyframes unlockGlow {
+  0%  { box-shadow: 0 0 30px rgba(201,168,76,0.6), 0 0 60px rgba(201,168,76,0.3); }
+  100%{ box-shadow: 0 0 8px rgba(201,168,76,0.15); }
+}
+.enigme-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--brun-mid);
+  background: rgba(0,0,0,0.2);
+}
+.enigme-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--or-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  min-width: 60px;
+}
+.enigme-status {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+  font-family: 'Special Elite', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.status-locked { color: #666; }
+.status-unlocked { color: #5cb85c; }
+.lock-icon { font-size: 0.8rem; }
+
+.enigme-body {
+  padding: 1rem;
+  position: relative;
+  min-height: 100px;
+}
+
+/* CONTENU FLOU quand verrouillé */
+.enigme-content-blur {
+  filter: blur(6px);
+  user-select: none;
+  pointer-events: none;
+  transition: filter 0.8s ease;
+}
+.enigme-card.unlocked .enigme-content-blur {
+  filter: none;
+}
+
+.enigme-lock-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: rgba(10,7,4,0.6);
+  backdrop-filter: blur(2px);
+  z-index: 5;
+  transition: opacity 0.6s ease;
+}
+.enigme-card.unlocked .enigme-lock-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+.overlay-padlock {
+  font-size: 2rem;
+  color: var(--or-dim);
+  opacity: 0.7;
+}
+.overlay-countdown {
+  font-family: 'Special Elite', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  color: var(--creme-dim);
+  text-transform: uppercase;
+  text-align: center;
+}
+.overlay-countdown-val {
+  color: var(--or);
+  font-size: 0.75rem;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.enigme-text {
+  font-family: 'Special Elite', serif;
+  font-size: 0.82rem;
+  color: var(--creme-dark);
+  line-height: 1.8;
+  margin-bottom: 0.8rem;
+}
+.enigme-keyword {
+  display: inline-block;
+  background: rgba(139,0,0,0.2);
+  border: 1px solid var(--rouge);
+  color: #e86060;
+  font-family: 'Special Elite', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  padding: 0.2rem 0.7rem;
+  text-transform: uppercase;
+  margin-top: 0.4rem;
+}
+.enigme-date-label {
+  font-family: 'Special Elite', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--or-dim);
+  text-transform: uppercase;
+  margin-top: 0.8rem;
+  opacity: 0.7;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 2rem 1rem 3rem;
+  border-top: 1px solid var(--brun-mid);
+}
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--or-dim);
+  text-transform: uppercase;
+}
+.footer-sub {
+  font-family: 'Special Elite', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: #444;
+  margin-top: 0.4rem;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   CORNER ORNAMENTS
+   ============================================================ */
+.corner-ornament {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  opacity: 0.4;
+}
+.corner-ornament.tl { top: 8px; left: 8px; border-top: 2px solid var(--or-dim); border-left: 2px solid var(--or-dim); }
+.corner-ornament.tr { top: 8px; right: 8px; border-top: 2px solid var(--or-dim); border-right: 2px solid var(--or-dim); }
+.corner-ornament.bl { bottom: 8px; left: 8px; border-bottom: 2px solid var(--or-dim); border-left: 2px solid var(--or-dim); }
+.corner-ornament.br { bottom: 8px; right: 8px; border-bottom: 2px solid var(--or-dim); border-right: 2px solid var(--or-dim); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 380px) {
+  .countdown-number { font-size: 1.8rem; min-width: 55px; }
+  .countdown-unit { min-width: 50px; }
+  .polaroids-grid { gap: 1rem 0.8rem; }
+}
+
+/* ============================================================
+   ANIMATIONS REVEAL
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-logo">OPÉRATION 06:45</div>
+  <div class="loading-bar-wrap"><div class="loading-bar-fill"></div></div>
+  <div class="loading-text">Chargement du dossier...</div>
+</div>
+
+<!-- TAMPON CONFIDENTIEL -->
+<div id="stamp-overlay">
+  <svg class="stamp-svg" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="130" cy="130" r="122" stroke="#8b0000" stroke-width="4" fill="none" opacity="0.9"/>
+    <circle cx="130" cy="130" r="112" stroke="#8b0000" stroke-width="1.5" fill="none" opacity="0.7"/>
+    <path d="M 130 20 A 110 110 0 1 1 129.99 20 Z" stroke="none" fill="rgba(139,0,0,0.05)"/>
+    <!-- Text on arc -->
+    <path id="arcTop" d="M 20,130 A 110,110 0 0 1 240,130" fill="none"/>
+    <path id="arcBot" d="M 240,130 A 110,110 0 0 1 20,130" fill="none"/>
+    <text font-family="Special Elite, serif" font-size="13" fill="#8b0000" letter-spacing="7" font-weight="bold">
+      <textPath href="#arcTop" startOffset="12%">CONFIDENTIEL · ACCÈS RESTREINT</textPath>
+    </text>
+    <text font-family="Special Elite, serif" font-size="11" fill="#8b0000" letter-spacing="5">
+      <textPath href="#arcBot" startOffset="15%">DOSSIER CLASSIFIÉ · ROUGE</textPath>
+    </text>
+    <!-- Center -->
+    <text x="130" y="118" font-family="Playfair Display, serif" font-size="28" fill="#8b0000" font-weight="900" text-anchor="middle" letter-spacing="2">OP.</text>
+    <text x="130" y="148" font-family="Playfair Display, serif" font-size="22" fill="#8b0000" font-weight="900" text-anchor="middle" letter-spacing="3">06:45</text>
+    <line x1="60" y1="158" x2="200" y2="158" stroke="#8b0000" stroke-width="1.5" opacity="0.6"/>
+    <!-- Stars -->
+    <text x="68" y="175" font-size="9" fill="#8b0000" opacity="0.7">✦</text>
+    <text x="130" y="178" font-size="9" fill="#8b0000" opacity="0.7" text-anchor="middle">✦</text>
+    <text x="186" y="175" font-size="9" fill="#8b0000" opacity="0.7">✦</text>
+    <!-- Distress lines -->
+    <line x1="25" y1="85" x2="235" y2="175" stroke="#8b0000" stroke-width="0.4" opacity="0.1"/>
+    <line x1="25" y1="100" x2="235" y2="190" stroke="#8b0000" stroke-width="0.3" opacity="0.07"/>
+  </svg>
+</div>
+
+<div class="vignette"></div>
+<div class="scanlines"></div>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header>
+  <div class="header-eyebrow">Dossier confidentiel — Accès unique</div>
+  <div class="header-title">OPÉRATION<br>06:45</div>
+  <div class="header-sub">Archives secrètes · Niveau rouge · À usage exclusif</div>
+  <div class="classified-badge">Top secret · Ne pas divulguer</div>
+</header>
+
+<!-- ============================================================
+     PROTOCOLE
+     ============================================================ -->
+<section class="reveal">
+  <div class="section-label">Protocole d'accès</div>
+  <div class="protocole-card">
+    <div class="corner-ornament tl"></div>
+    <div class="corner-ornament tr"></div>
+    <div class="corner-ornament bl"></div>
+    <div class="corner-ornament br"></div>
+    <div class="protocole-title">Protocole d'accès</div>
+    <div class="protocole-text">
+      Certaines portes ne s'ouvrent qu'une fois. Le seuil des 18 ans est franchi, mais l'accès à ce qui t'est destiné reste suspendu. Ce qui t'attend n'est pas un simple présent, c'est une récompense qui exige de la persévérance.
+    </div>
+    <div class="protocole-name">Nalya,</div>
+    <div class="protocole-text" style="margin-top:0.6rem;">
+      le compte à rebours a commencé. Sauras-tu déchiffrer ce que le futur te réserve ou resteras-tu à la porte ?
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="info-blocks">
+    <div class="info-block highlight">
+      <div class="info-icon">📅</div>
+      <div class="info-content">
+        <div class="info-title">Bloque ta journée</div>
+        <div class="info-desc">Le <strong>19 OCTOBRE</strong> t'appartient entièrement. Ne prévois rien d'autre, de l'aube jusqu'au crépuscule.</div>
+      </div>
+    </div>
+    <div class="info-block">
+      <div class="info-icon">📂</div>
+      <div class="info-content">
+        <div class="info-title">Un fragment par semaine</div>
+        <div class="info-desc">Chaque semaine, une nouvelle énigme s'active. Reviens régulièrement sur cette page.</div>
+      </div>
+    </div>
+    <div class="info-block">
+      <div class="info-icon">👗</div>
+      <div class="info-content">
+        <div class="info-title">Le Dress Code</div>
+        <div class="info-desc">Prépare une tenue où tu te trouves magnifique (il y aura des photos !), mais attention : tes chaussures doivent être tes meilleures alliées. Le confort est l'unique clé.</div>
+      </div>
+    </div>
+    <div class="info-block">
+      <div class="info-icon">🔒</div>
+      <div class="info-content">
+        <div class="info-title">Le Secret</div>
+        <div class="info-desc">N'essaie pas de deviner. Même le matin du départ, le mystère restera entier. Laisse-toi simplement porter.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMPTE À REBOURS GLOBAL
+     ============================================================ -->
+<section class="reveal">
+  <div class="section-label">Décompte de mission</div>
+  <div class="countdown-section">
+    <div class="corner-ornament tl"></div>
+    <div class="corner-ornament tr"></div>
+    <div class="corner-ornament bl"></div>
+    <div class="corner-ornament br"></div>
+    <div class="countdown-label">⬛ Compte à rebours actif ⬛</div>
+    <div class="countdown-title">Jusqu'à l'Opération 06:45</div>
+    <div class="countdown-grid">
+      <div class="countdown-unit">
+        <div class="countdown-number" id="cd-days">00</div>
+        <div class="countdown-unit-label">Jours</div>
+      </div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit">
+        <div class="countdown-number" id="cd-hours">00</div>
+        <div class="countdown-unit-label">Heures</div>
+      </div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit">
+        <div class="countdown-number" id="cd-mins">00</div>
+        <div class="countdown-unit-label">Minutes</div>
+      </div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-unit">
+        <div class="countdown-number" id="cd-secs">00</div>
+        <div class="countdown-unit-label">Secondes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     POLAROIDS
+     ============================================================ -->
+<section class="polaroids-section reveal">
+  <div class="section-label" style="padding:0 0.5rem 1rem;">Preuves photographiques — Archives</div>
+  <div class="polaroids-grid">
+
+    <!-- Polaroid 1 -->
+    <div class="polaroid-wrap">
+      <svg class="thumbtack" viewBox="0 0 40 40"><ellipse class="shadow" cx="20" cy="36" rx="8" ry="3"/><circle class="head" cx="20" cy="12" r="10"/><circle class="shine" cx="17" cy="9" r="3"/><rect x="18" y="20" width="4" height="16" rx="2" fill="#555"/></svg>
+      <div class="polaroid">
+        <div class="polaroid-img-wrap">
+          <!-- REMPLACE src="" par le chemin de ton image -->
+          <img src="nalyaanto.jpg" alt="Photo 1" onload="this.nextElementSibling.style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="polaroid-placeholder">
+            <div class="polaroid-placeholder-icon">📷</div>
+            <div class="polaroid-placeholder-text">Photo 01</div>
+          </div>
+        </div>
+        <div class="polaroid-note">Ajoutez votre note ici</div>
+      </div>
+    </div>
+
+    <!-- Polaroid 2 -->
+    <div class="polaroid-wrap">
+      <svg class="thumbtack" viewBox="0 0 40 40"><ellipse class="shadow" cx="20" cy="36" rx="8" ry="3"/><circle class="head" cx="20" cy="12" r="10"/><circle class="shine" cx="17" cy="9" r="3"/><rect x="18" y="20" width="4" height="16" rx="2" fill="#555"/></svg>
+      <div class="polaroid">
+        <div class="polaroid-img-wrap">
+          <img src="nalyalise.jpg" alt="Photo 2" onload="this.nextElementSibling.style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="polaroid-placeholder">
+            <div class="polaroid-placeholder-icon">📷</div>
+            <div class="polaroid-placeholder-text">Photo 02</div>
+          </div>
+        </div>
+        <div class="polaroid-note">Ajoutez votre note ici</div>
+      </div>
+    </div>
+
+    <!-- Polaroid 3 -->
+    <div class="polaroid-wrap">
+      <svg class="thumbtack" viewBox="0 0 40 40"><ellipse class="shadow" cx="20" cy="36" rx="8" ry="3"/><circle class="head" cx="20" cy="12" r="10"/><circle class="shine" cx="17" cy="9" r="3"/><rect x="18" y="20" width="4" height="16" rx="2" fill="#555"/></svg>
+      <div class="polaroid">
+        <div class="polaroid-img-wrap">
+          <img src="nalyaethan.jpg" alt="Photo 3" onload="this.nextElementSibling.style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="polaroid-placeholder">
+            <div class="polaroid-placeholder-icon">📷</div>
+            <div class="polaroid-placeholder-text">Photo 03</div>
+          </div>
+        </div>
+        <div class="polaroid-note">Ajoutez votre note ici</div>
+      </div>
+    </div>
+
+    <!-- Polaroid 4 -->
+    <div class="polaroid-wrap">
+      <svg class="thumbtack" viewBox="0 0 40 40"><ellipse class="shadow" cx="20" cy="36" rx="8" ry="3"/><circle class="head" cx="20" cy="12" r="10"/><circle class="shine" cx="17" cy="9" r="3"/><rect x="18" y="20" width="4" height="16" rx="2" fill="#555"/></svg>
+      <div class="polaroid">
+        <div class="polaroid-img-wrap">
+          <img src="groupe.jpg" alt="Photo 4" onload="this.nextElementSibling.style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="polaroid-placeholder">
+            <div class="polaroid-placeholder-icon">📷</div>
+            <div class="polaroid-placeholder-text">Photo 04</div>
+          </div>
+        </div>
+        <div class="polaroid-note">Ajoutez votre note ici</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     INSTRUCTIONS iOS
+     ============================================================ -->
+<section class="reveal">
+  <div class="section-label">Directive opérationnelle</div>
+  <div class="ios-card">
+    <div class="corner-ornament tl"></div>
+    <div class="corner-ornament br"></div>
+    <div class="ios-title">💡 Ajoute cette page à ton écran d'accueil</div>
+    <div class="ios-steps">
+      <div class="ios-step">
+        <div class="ios-step-num">1</div>
+        <div class="ios-step-text">Appuie sur le bouton Partager <strong>(📤)</strong> dans Safari</div>
+      </div>
+      <div class="ios-step">
+        <div class="ios-step-num">2</div>
+        <div class="ios-step-text">Choisis <strong>« Sur l'écran d'accueil »</strong></div>
+      </div>
+      <div class="ios-step">
+        <div class="ios-step-num">3</div>
+        <div class="ios-step-text">Appuie sur <strong>Ajouter</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ÉNIGMES
+     ============================================================ -->
+<div class="enigmes-header reveal">
+  <div class="section-label" style="justify-content:center;">Système d'enquête</div>
+  <div class="enigmes-title">LES 13 ÉNIGMES</div>
+  <div class="enigmes-subtitle">Fragments de vérité — Déverrouillage progressif</div>
+  <div class="enigmes-count">13 dossiers scellés</div>
+</div>
+
+<div class="enigmes-list" id="enigmes-list">
+  <!-- Généré par JS -->
+</div>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer>
+  <div class="footer-logo">OPÉRATION 06:45</div>
+  <div class="footer-sub">Dossier confidentiel · Accès unique · © Nalya</div>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+/* ============================================================
+   ╔══════════════════════════════════════╗
+   ║   CONFIGURATION — MODIFIER ICI      ║
+   ╚══════════════════════════════════════╝
+   ============================================================ */
+
+// ► DATE CIBLE DU COMPTE À REBOURS GLOBAL
+// Format: AAAA, MM-1 (0=Jan, 9=Oct), JJ, HH, MM
+const TARGET_DATE = new Date(2026, 9, 19, 6, 45, 0); // 19 octobre 2025 à 06:45
+
+// ► LES 13 ÉNIGMES
+// Pour chaque énigme :
+//   unlockDate : Date de déverrouillage
+//   title      : Titre de l'énigme
+//   text       : Texte de l'énigme (placeholder — à remplacer)
+//   keyword    : Mot-clé mis en évidence
+const ENIGMES = [
+  {
+    unlockDate: new Date(2026, 6, 18, 23, 23, 0), // Samedi 18 juillet — 23h23
+    title: "FRAGMENT I — Le Double Jeu",
+    text: "Pendant que ton horizon s'illumine à l'Ouest, mon élan défie les cimes de l'Est. La gravité n'est qu'un compte à rebours : quand les roues cessent de mordre la poussière, le point de départ revient à la charge dans l'ombre.",
+    keyword: "LE TRIUMVIRAT"
+  },
+  {
+    unlockDate: new Date(2026, 6, 29, 18, 4, 0), // Mercredi 29 juillet — 18h04
+    title: "FRAGMENT II — Les Retrouvailles du Sphinx",
+    text: "La surprise est passée, les visages sont assemblés, mais le mouvement ne fait que commencement. Trois paires de mains guident tes pas, mais l'axe de la rotation reste invisible.",
+    keyword: "CYCLOÏDE"
+  },
+  {
+    unlockDate: new Date(2026, 7, 8, 11, 11, 0), // Samedi 8 août — 11h11
+    title: "FRAGMENT III — La Trajectoire Courbe",
+    text: "Ni ligne droite, ni chute libre. C’est une courbe parfaite tracée par un point sur une roue en plein élan. Elle dicte notre direction sans que tu puisses en voir le centre.",
+    keyword: "PRÉCIPITE"
+  },
+  {
+    unlockDate: new Date(2026, 7, 18, 14, 0, 0), // Mardi 18 août — 14h00
+    title: "FRAGMENT IV — L'Ombre sur la Ville",
+    text: "Perchée très haut, elle observe la foule des mortels sans jamais cligner de ses yeux de pierre. Elle attend que les voyageurs s'égarent dans son labyrinthe.",
+    keyword: "LA STRYGE"
+  },
+  {
+    unlockDate: new Date(2026, 7, 28, 20, 0, 0), // Vendredi 28 août — 20h00
+    title: "FRAGMENT V — La Forge d’Héphaïstos",
+    text: "Née de la révolution des machines et du feu, elle a été détestée avant d’être adulée. Une armure géante ajourée qui ne craint que le temps qui passe.",
+    keyword: "MÉTALLURGIQUE"
+  },
+  {
+    unlockDate: new Date(2026, 8, 7, 8, 0, 0), // Lundi 7 septembre — 08h00
+    title: "FRAGMENT VI — Le Point de Non-Retour",
+    text: "Un pas de plus vers l'abîme. Quand l'aiguille tournera dans le bon sens, la descente sera si rapide que toute tentative de résistance sera vaine.",
+    keyword: "AU"
+  },
+  {
+    unlockDate: new Date(2026, 8, 17, 17, 17, 0), // Jeudi 17 septembre — 17h17
+    title: "FRAGMENT VII — Le Maître des Courants",
+    text: "Il aspire tout ce qui ose s'en approcher. Un centre d'attraction liquide qui engloutit l'histoire et recrache les secrets au compte-gouttes.",
+    keyword: "VORTEX"
+  },
+  {
+    unlockDate: new Date(2026, 8, 27, 19, 0, 0), // Dimanche 27 septembre — 19h00
+    title: "FRAGMENT VIII — Le Miroir Inversé",
+    text: "Regarde l'eau sous le pont : ce que tu y vois n'est pas le ciel, mais le reflet d'une illusion que nous construisons pour toi depuis l'été.",
+    keyword: "DES"
+  },
+  {
+    unlockDate: new Date(2026, 9, 2, 16, 30, 0), // Vendredi 2 octobre — 16h30
+    title: "FRAGMENT IX — Les Secrets Ensevelis",
+    text: "Couche après couche, le temps dépose ses morceaux de passé. Il faut creuser sous la surface pour comprendre où la terre a décidé de se souvenir.",
+    keyword: "SÉDIMENTS"
+  },
+  {
+    unlockDate: new Date(2026, 9, 7, 12, 0, 0), // Mercredi 7 octobre — 12h00
+    title: "FRAGMENT X — L'Ancienne Cité",
+    text: "Avant les grands boulevards, avant les lumières de la nuit, il n'y avait qu'une île de boue au milieu des eaux sauvages où un peuple de marins avait trouvé refuge.",
+    keyword: "LUTÉCIENS"
+  },
+  {
+    unlockDate: new Date(2026, 9, 11, 21, 0, 0), // Dimanche 11 octobre — 21h00
+    title: "FRAGMENT XI — Le Grand Assemblage",
+    text: "Les pièces du puzzle sont éparpillées dans ta mémoire depuis juillet. Réunis les mots découverts dans l'ordre de leur apparition, mais ne cherche pas le sens là où tes yeux s'arrêtent.",
+    keyword: "(Pas de mot-clé, l'énigme elle-même est la consigne)"
+  },
+  {
+    unlockDate: new Date(2026, 9, 14, 18, 30, 0), // Mercredi 14 octobre — 18h30
+    title: "FRAGMENT XII — L'Outil des Sages",
+    text: "Pour briser le sceau, tu devras traduire le langage des anciens et chercher quelle capitale moderne a été bâtie sur les marécages de Lutèce sous l'œil de ses monstres de fer.",
+    keyword: "(Indice de décodage)"
+  },
+  {
+    unlockDate: new Date(2026, 9, 16, 22, 22, 0), // Vendredi 16 octobre — 22h22
+    title: "FRAGMENT XIII — L'Ultime Sommation",
+    text: "Le Triumvirat réclame ta présence. Demain, ton sac doit être prêt. Ne cherche plus le lieu, c'est le lieu qui viendra à toi à la première heure.",
+    keyword: "(Annonce du départ imminent)"
+  }
+];
+
+/* ============================================================
+   POLAROIDS — CONFIGURATION
+   Remplace les src="" par tes chemins d'images
+   et les notes par tes textes personnels
+   ============================================================ */
+const POLAROID_NOTES = [
+  "Ajoutez votre note ici",
+  "Ajoutez votre note ici",
+  "Ajoutez votre note ici",
+  "Ajoutez votre note ici"
+];
+// Pour ajouter une image : <img src="photo1.jpg" ...>
+// Les placeholders s'affichent automatiquement si src="" est vide
+
+/* ============================================================
+   LOADING SCREEN
+   ============================================================ */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+  }, 2200);
+});
+
+/* ============================================================
+   COMPTE À REBOURS GLOBAL
+   ============================================================ */
+function updateGlobalCountdown() {
+  const now = new Date();
+  const diff = TARGET_DATE - now;
+  if (diff <= 0) {
+    document.getElementById('cd-days').textContent  = '00';
+    document.getElementById('cd-hours').textContent = '00';
+    document.getElementById('cd-mins').textContent  = '00';
+    document.getElementById('cd-secs').textContent  = '00';
+    return;
+  }
+  const days  = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins  = Math.floor((diff % (1000*60*60)) / (1000*60));
+  const secs  = Math.floor((diff % (1000*60)) / 1000);
+  document.getElementById('cd-days').textContent  = String(days).padStart(2,'0');
+  document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+  document.getElementById('cd-mins').textContent  = String(mins).padStart(2,'0');
+  document.getElementById('cd-secs').textContent  = String(secs).padStart(2,'0');
+}
+setInterval(updateGlobalCountdown, 1000);
+updateGlobalCountdown();
+
+/* ============================================================
+   FORMATAGE DATE LISIBLE
+   ============================================================ */
+function formatDate(d) {
+  const days   = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} — ${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function formatCountdownShort(diff) {
+  if (diff <= 0) return 'Disponible';
+  const d = Math.floor(diff / (1000*60*60*24));
+  const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+  const s = Math.floor((diff % (1000*60)) / 1000);
+  if (d > 0) return `${d}j ${h}h ${m}m`;
+  if (h > 0) return `${h}h ${m}m ${s}s`;
+  return `${m}m ${s}s`;
+}
+
+/* ============================================================
+   GÉNÉRATION DES ÉNIGMES
+   ============================================================ */
+function buildEnigmes() {
+  const list = document.getElementById('enigmes-list');
+  const now  = new Date();
+
+  ENIGMES.forEach((e, i) => {
+    const isUnlocked = now >= e.unlockDate;
+    const diff = e.unlockDate - now;
+
+    const card = document.createElement('div');
+    card.className = 'enigme-card reveal' + (isUnlocked ? ' unlocked' : '');
+    card.id = `enigme-${i}`;
+
+    card.innerHTML = `
+      <div class="enigme-header">
+        <div class="enigme-num">N° ${String(i+1).padStart(2,'0')}</div>
+        <div style="flex:1; font-family:'Playfair Display',serif; font-size:0.78rem; font-weight:600; color:var(--creme-dim); letter-spacing:0.05em;">${e.title}</div>
+        <div class="enigme-status ${isUnlocked ? 'status-unlocked' : 'status-locked'}">
+          <span class="lock-icon">${isUnlocked ? '🔓' : '🔒'}</span>
+          <span>${isUnlocked ? 'DÉVERROUILLÉ' : 'VERROUILLÉ'}</span>
+        </div>
+      </div>
+      <div class="enigme-body">
+        <div class="enigme-content-blur">
+          <div class="enigme-text">${e.text}</div>
+          <div class="enigme-keyword">${e.keyword}</div>
+          <div class="enigme-date-label">Déverrouillé le ${formatDate(e.unlockDate)}</div>
+        </div>
+        ${!isUnlocked ? `
+        <div class="enigme-lock-overlay" id="overlay-${i}">
+          <div class="overlay-padlock">🔒</div>
+          <div class="overlay-countdown">
+            Déverrouillage dans
+            <span class="overlay-countdown-val" id="ov-cd-${i}">${formatCountdownShort(diff)}</span>
+          </div>
+          <div style="font-family:'Special Elite',serif; font-size:0.5rem; letter-spacing:0.15em; color:var(--or-dim); margin-top:0.3rem; text-transform:uppercase; opacity:0.6;">${formatDate(e.unlockDate)}</div>
+        </div>` : ''}
+      </div>
+    `;
+
+    list.appendChild(card);
+  });
+}
+
+buildEnigmes();
+
+/* ============================================================
+   MISE À JOUR DES COMPTES À REBOURS ÉNIGMES
+   ============================================================ */
+function updateEnigmeCountdowns() {
+  const now = new Date();
+  ENIGMES.forEach((e, i) => {
+    const card    = document.getElementById(`enigme-${i}`);
+    const overlay = document.getElementById(`overlay-${i}`);
+    const cdEl    = document.getElementById(`ov-cd-${i}`);
+    if (!card) return;
+
+    if (now >= e.unlockDate && !card.classList.contains('unlocked')) {
+      card.classList.add('unlocked');
+      const statusEl = card.querySelector('.enigme-status');
+      if (statusEl) {
+        statusEl.className = 'enigme-status status-unlocked';
+        statusEl.innerHTML = '<span class="lock-icon">🔓</span><span>DÉVERROUILLÉ</span>';
+      }
+    }
+
+    if (cdEl) {
+      const diff = e.unlockDate - now;
+      cdEl.textContent = formatCountdownShort(diff);
+    }
+  });
+}
+setInterval(updateEnigmeCountdowns, 1000);
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Observer dynamique pour les énigmes générées
+setTimeout(() => {
+  document.querySelectorAll('.enigme-card.reveal').forEach(el => observer.observe(el));
+}, 100);
+
+</script>
+</body>
+</html>
