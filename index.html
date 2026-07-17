@@ -816,16 +816,24 @@ footer {
   transform: none;
 }
 
+   /* ============================================================
+   Coeur Polaroid
+   ============================================================ */
+
    .polaroid-heart {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 12px 0 8px;
-    transform: rotate(-8deg);
+    margin: 14px 0 8px;
+    transform: rotate(-12deg);
 }
 
 .polaroid-heart svg {
     overflow: visible;
+}
+
+.polaroid-heart path {
+    filter: drop-shadow(0 1px 0 rgba(0,0,0,.08));
 }
 </style>
 </head>
@@ -1002,19 +1010,26 @@ footer {
     </div>
 
     <div class="polaroid-heart">
-      <svg width="70" height="60" viewBox="0 0 100 90" fill="none">
-        <path d="M50 80
-                 C15 55 5 35 15 18
-                 C23 5 40 7 50 22
-                 C60 7 77 5 85 18
-                 C95 35 85 55 50 80Z"
-              stroke="#c2185b"
-              stroke-width="4"
+    <svg viewBox="0 0 120 90" width="80" height="60">
+        <path d="M61 79
+                 C18 52 11 24 28 14
+                 C41 7 54 16 60 30
+                 C66 16 79 7 92 14
+                 C109 24 102 52 61 79"
+              fill="none"
+              stroke="#c72d5a"
+              stroke-width="3.5"
               stroke-linecap="round"
-              stroke-linejoin="round"
-              fill="none"/>
-      </svg>
-    </div>
+              stroke-linejoin="round"/>
+
+        <path d="M61 79
+                 C64 82 68 84 72 85"
+              fill="none"
+              stroke="#c72d5a"
+              stroke-width="3.5"
+              stroke-linecap="round"/>
+    </svg>
+</div>
   </div>
 </div>
 
