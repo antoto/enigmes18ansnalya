@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>La Quête du Triumvirat</title>
+
+<link rel="apple-touch-icon" href="iconeenigmes.png?v=12">
+<link rel="icon" type="image/png" href="iconeenigmes.png?v=12">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Special+Elite&display=swap" rel="stylesheet">
+
+<style>
+
+:root {
+    --noir:#080604;
+    --noir-soft:#120d09;
+    --brun:#1e1009;
+    --brun-mid:#3a1f0d;
+    --brun-light:#5c3318;
+    --or:#c9a84c;
+    --or-light:#e8c96a;
+    --creme:#f2e8d5;
+    --creme-dark:#d4c4a0;
+    --rouge:#8b0000;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    background:
+    radial-gradient(circle at top, #241307 0%, var(--noir) 55%);
+    color:var(--creme);
+    font-family:'Special Elite', serif;
+    min-height:100vh;
+    padding:40px 15px;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+    pointer-events:none;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    position:relative;
+}
+
+header{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.eyebrow{
+    color:#7a6030;
+    letter-spacing:.35em;
+    font-size:.7rem;
+    text-transform:uppercase;
+}
+
+h1{
+    font-family:'Playfair Display',serif;
+    color:var(--or);
+    font-size:clamp(2rem,5vw,3.5rem);
+    letter-spacing:.05em;
+    margin:15px 0;
+    text-transform:uppercase;
+}
+
+.subtitle{
+    color:var(--creme-dark);
+    font-size:1rem;
+}
+
+/* --- Section Règles améliorée --- */
+.intro{
+    background: linear-gradient(135deg, rgba(30,16,9,.95), rgba(10,7,4,.95));
+    border: 1px solid var(--brun-light);
+    border-left: 4px solid var(--or);
+    padding: 30px;
+    margin-bottom: 40px;
+    border-radius: 4px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.intro-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--or-light);
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--brun-mid);
+    padding-bottom: 10px;
+}
+
+.rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.rule-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--brun-mid);
+    border-top: 2px solid var(--or);
+    padding: 15px;
+    text-align: center;
+    border-radius: 4px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.rule-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--or-light);
+}
+
+.rule-card p {
+    font-size: 0.95rem;
+    margin: 0;
+    color: var(--creme);
+}
+
+/* --- Fragments --- */
+.fragment{
+    background:
+    linear-gradient(135deg,
+    rgba(30,16,9,.95),
+    rgba(18,13,9,.95));
+
+    border:1px solid var(--brun-light);
+    border-left:4px solid var(--or);
+
+    padding:30px;
+    margin-bottom:25px;
+
+    position:relative;
+    border-radius: 4px;
+
+    animation:appear .6s ease;
+}
+
+.fragment::before,
+.fragment::after{
+    content:"";
+    position:absolute;
+    width:20px;
+    height:20px;
+}
+
+.fragment::before{
+    top:8px;
+    left:8px;
+    border-top:2px solid var(--or);
+    border-left:2px solid var(--or);
+}
+
+.fragment::after{
+    bottom:8px;
+    right:8px;
+    border-bottom:2px solid var(--or);
+    border-right:2px solid var(--or);
+}
+
+@keyframes appear{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+h2{
+    font-family:'Playfair Display',serif;
+    color:var(--or-light);
+    font-size:1.3rem;
+    margin-bottom:15px;
+    letter-spacing:.05em;
+}
+
+.date{
+    color:#a0906c;
+    font-size:.8rem;
+    margin-bottom:20px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+}
+
+.label{
+    color:var(--or);
+    font-size:.75rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    margin-bottom:8px;
+}
+
+.text{
+    line-height:1.8;
+    font-size:.95rem;
+    margin-bottom:15px;
+    white-space: pre-line;
+}
+
+.explanation{
+    font-size: .85rem;
+    color: var(--creme-dark);
+    font-style: italic;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border-left: 2px solid var(--or-light);
+}
+
+.keyword{
+    background:rgba(201,168,76,.08);
+    border:1px solid #7a6030;
+    padding:15px;
+    text-align:center;
+    font-family:'Playfair Display',serif;
+    color:var(--or-light);
+    font-size:1.1rem;
+    letter-spacing:.12em;
+    border-radius: 4px;
+}
+
+/* --- Section Finale Modifiée --- */
+.final{
+    margin-top:60px;
+    padding:40px;
+    border:2px solid var(--or);
+    background:
+    radial-gradient(circle,
+    rgba(201,168,76,.12),
+    transparent);
+    border-radius: 6px;
+}
+
+.final h2{
+    font-size:1.8rem;
+    text-align: center;
+    color: var(--or-light);
+    margin-bottom: 25px;
+}
+
+.feedback-box {
+    line-height: 1.8;
+    font-size: 0.95rem;
+    color: var(--creme);
+}
+
+.feedback-box h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--or);
+    margin: 20px 0 10px 0;
+    font-size: 1.1rem;
+}
+
+.feedback-box ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.feedback-box li {
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.feedback-box li::before {
+    content: "✦";
+    color: var(--or);
+    position: absolute;
+    left: 0;
+}
+
+@media(max-width:600px){
+    body{
+        padding:20px 10px;
+    }
+
+    .fragment,
+    .intro{
+        padding:20px;
+    }
+
+    .rules-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+    <div class="container">
+    
+    <header>
+    
+    <div class="eyebrow">
+    Anniversaire — 18 ans de Nalya
+    </div>
+    
+    <h1>
+    La Quête du Triumvirat
+    </h1>
+    
+    <div class="subtitle">
+    13 fragments • Une aventure • Une destination
+    </div>
+    
+    </header>
+    
+    <div class="intro">
+    
+        <div class="intro-title">RÈGLE COHÉRENTE — PONCTUATION</div>
+    
+        <div class="rules-grid">
+            <div class="rule-card">
+                <p>1 SIGNE ➾ 1ère lettre</p>
+            </div>
+            <div class="rule-card">
+                <p>2 SIGNEs ➾ LETRRES 1 - 2</p>
+            </div>
+            <div class="rule-card">
+                <p>3 SIGNES ➾ 2e lettre</p>
+            </div>
+            <div class="rule-card">
+                <p>4 SIGNES ➾ 3e lettre</p>
+            </div>
+        </div>
+    
+    </div>
+    
+    <div id="fragments"></div>
+    
+    <div class="final">
+    
+        <h2>Résolution de la Quête & Explication by Gemini</h2>
+        
+        <div class="feedback-box">
+            <p>En rassemblant l'intégralité des 13 fragments et en appliquant les règles de ponctuation, voici la solution finale du jeu :</p>
+            
+            <h3>1. Décodage du Message de Ponctuation :</h3>
+            <ul>
+                <li><strong>Fragment I :</strong> 1v + 1p ➾ 2 = RE (RENARD)</li>
+                <li><strong>Fragment II :</strong> 2v + 1p ➾ 3 = N (ANCRE)</li>
+                <li><strong>Fragment III :</strong> 1v + 1p ➾ 2 = DE (DESSIN)</li>
+                <li><strong>Fragment IV :</strong> 0v + 1p ➾ 1 = Z (ZÉPHYR)</li>
+                <li><strong>Fragment V :</strong> 1v + 1p ➾ 2 = VO (VOILIER)</li>
+                <li><strong>Fragment VI :</strong> 3v + 1p ➾ 4 = U (BRUME)</li>
+                <li><strong>Fragment VII :</strong> 0v + 1p ➾ 1 = S (SOLEIL)</li>
+                <li><strong>Fragment VIII :</strong> 1v + 1p ➾ 2 = PA (BASKETS / PAVAGE)</li>
+                <li><strong>Fragment IX :</strong> 0v + 1p ➾ 1 = R (ROCHER)</li>
+                <li><strong>Fragment X :</strong> 2v + 1p ➾ 3 = I (RIVAGE)</li>
+                <li><strong>Fragment XI :</strong> 0v + 1p ➾ 1 = S (SOLEIL)</li>
+            </ul>
+
+            <div style="text-align:center; font-size:1.4rem; color:var(--or-light); margin:20px 0; font-family:'Playfair Display', serif;">
+                ✦ RENDEZ-VOUS PARIS ✦
+            </div>
+
+            <h3>2. Révélation de la Destination Final : HONFLEUR</h3>
+            <p>
+                Si Paris est le point de rendez-vous ou de départ, l'ensemble des éléments thématiques des fragments pointe directement vers la destination maritime d'<strong>Honfleur</strong> :
+            </p>
+            <ul>
+                <li><strong>Le Port & Les Marées :</strong> Le vieux bassin, les voiliers et les quais caractéristiques.</li>
+                <li><strong>Les Artistes :</strong> Référence directe aux peintres impressionnistes (Monet, Boudin) inspirés par la lumière d'Honfleur.</li>
+                <li><strong>Les Pavés & Le Clocher :</strong> Les ruelles pavées pittoresques et la célèbre église Sainte-Catherine.</li>
+            </ul>
+
+            <p style="margin-top: 20px;">
+                <strong>Mon avis sur l'énigme :</strong> La structure est brillante ! Jouer sur une double lecture — d'un côté la mécanique rigoureuse du comptage de la ponctuation pour former "RENDEZ-VOUS PARIS", et de l'autre un champ lexical poétique qui dresse le portrait d'Honfleur — rend la chasse au trésor captivante de bout en bout. Un superbe cadeau d'anniversaire pour les 18 ans de Nalya !
+            </p>
+        </div>
+    
+    </div>
+    
+    </div>
+    
+    <script>
+    
+    const fragments = [
+    
+    [
+    "FRAGMENT I — Le réveil",
+    `Chaque aventure commence avant le lever du soleil, il faut parfois accepter de partir sans tout comprendre.`,
+    "RENARD",
+    "1 virgule + 1 point ➾ 2 = lettres 1-2 • RENARD → RE"
+    ],
+    
+    [
+    "FRAGMENT II — Les marées",
+    `L'eau avance, puis recule, sans jamais se tromper.`,
+    "ANCRE",
+    "2 virgules + 1 point ➾ 3 = 2e lettre • ANCRE → N"
+    ],
+    
+    [
+    "FRAGMENT III — Les artistes",
+    `Les couleurs racontent parfois plus que les mots, il suffit d'observer.`,
+    "DESSIN",
+    "1 virgule + 1 point ➾ 2 = lettres 1-2 • DESSIN → DE"
+    ],
+    
+    [
+    "FRAGMENT IV — Le vent",
+    `Invisible il accompagne tous ceux qui prennent le large.`,
+    "ZÉPHYR",
+    "0 virgule + 1 point ➾ 1 = 1ère lettre • ZÉPHYR → Z"
+    ],
+    
+    [
+    "FRAGMENT V — Le port",
+    `Certains arrivent, d'autres repartent.`,
+    "VOILIER",
+    "1 virgule + 1 point ➾ 2 = lettres 1-2 • VOILIER → VO"
+    ],
+    
+    [
+    "FRAGMENT VI — Les quais",
+    `Les pas résonnent près de l'eau, doucement, longtemps, sans bruit.`,
+    "BRUME",
+    "3 virgules + 1 point ➾ 4 = 3e lettre • BRUME → U"
+    ],
+    
+    [
+    "FRAGMENT VII — Les mouettes",
+    `Elles connaissent toujours le chemin.`,
+    "SOLEIL",
+    "0 virgule + 1 point ➾ 1 = 1ère lettre • SOLEIL → S"
+    ],
+    
+    [
+    "FRAGMENT VIII — Les pavés",
+    `Les rues anciennes racontent des histoires, elles méritent qu'on prenne son temps.`,
+    "BASKETS",
+    "1 virgule + 1 point ➾ 2 = lettres 1-2 • PAVAGE → PA"
+    ],
+    
+    [
+    "FRAGMENT IX — Le clocher",
+    `Il domine la ville depuis toujours.`,
+    "ROCHER",
+    "0 virgule + 1 point ➾ 1 = 1ère lettre • ROCHER → R"
+    ],
+    
+    [
+    "FRAGMENT X — Les souvenirs",
+    `Une image suffit parfois à tout raconter, même, des années plus tard.`,
+    "RIVAGE",
+    "2 virgules + 1 point ➾ 3 = 2e lettre • RIVAGE → I"
+    ],
+    
+    [
+    "FRAGMENT XI — Le secret",
+    `Certaines réponses méritent d'attendre.`,
+    "SOLEIL",
+    "0 virgule + 1 point ➾ 1 = 1ère lettre • SOLEIL → S"
+    ],
+    
+    [
+    "FRAGMENT XII — La confiance",
+    `Les apparences sont parfois trompeuses, mais les meilleurs souvenirs commencent souvent ainsi.`,
+    "-------",
+    "-----"
+    ],
+    
+    [
+    "FRAGMENT XIII — Le dernier fragment",
+    `Si tu crois avoir trouvé la destination, garde malgré tout un doute. Les plus belles surprises sont celles qu'on ne voit jamais venir.`,
+    "-------",
+    "-----"
+    ]
+    
+    ];
+    
+    const zone=document.getElementById("fragments");
+    
+    fragments.forEach(f=>{
+    
+    zone.innerHTML += `
+    <section class="fragment">
+    
+    <h2>${f[0]}</h2>
+    
+    <div class="label">Énigme</div>
+    
+    <div class="text">${f[1]}</div>
+    
+    <div class="explanation">
+    💡 <strong>Analyse :</strong> ${f[3]}
+    </div>
+    
+    <div class="label">Mot-clé</div>
+    
+    <div class="keyword">${f[2]}</div>
+    
+    </section>
+    `;
+    
+    });
+    
+    </script>
+    
+    </body>
+</html>

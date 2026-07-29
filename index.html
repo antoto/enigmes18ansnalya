@@ -163,6 +163,101 @@ body::before {
 }
 
 /* ============================================================
+   NOTIFICATIONS TEMPS RÉEL (Firebase)
+   Ajouté — n'affecte aucun style existant
+   ============================================================ */
+#notif-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9600;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  width: min(360px, calc(100vw - 2rem));
+  pointer-events: none;
+}
+.notif-toast {
+  pointer-events: auto;
+  position: relative;
+  background: linear-gradient(135deg, rgba(30,16,9,0.98) 0%, rgba(10,7,4,0.98) 100%);
+  border: 1px solid var(--brun-light);
+  border-left: 3px solid var(--rouge);
+  padding: 0.9rem 2.1rem 0.9rem 1.1rem;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.55);
+  animation: notifIn 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.notif-toast::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  opacity: 0.5;
+  pointer-events: none;
+}
+.notif-toast.closing {
+  animation: notifOut 0.35s ease forwards;
+}
+@keyframes notifIn {
+  0%   { opacity: 0; transform: translateX(50px) scale(0.94); }
+  60%  { opacity: 1; transform: translateX(-4px) scale(1.01); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes notifOut {
+  to { opacity: 0; transform: translateX(40px) scale(0.92); }
+}
+.notif-eyebrow {
+  position: relative;
+  font-family: 'Special Elite', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  color: var(--rouge-bright);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.notif-title {
+  position: relative;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--or-light);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.35rem;
+  line-height: 1.3;
+}
+.notif-message {
+  position: relative;
+  font-family: 'Special Elite', serif;
+  font-size: 0.76rem;
+  line-height: 1.65;
+  color: var(--creme-dark);
+}
+.notif-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--or-dim);
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.3rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.notif-close:hover {
+  color: var(--rouge-bright);
+  transform: scale(1.15);
+}
+@media (max-width: 480px) {
+  #notif-container { left: 1rem; right: 1rem; width: auto; top: 0.75rem; }
+}
+
+/* ============================================================
    HEADER
    ============================================================ */
 header {
@@ -842,6 +937,11 @@ footer {
 
 <body>
 
+<!-- ============================================================
+     NOTIFICATIONS TEMPS RÉEL — rempli dynamiquement depuis Firebase
+     ============================================================ -->
+<div id="notif-container" aria-live="polite"></div>
+
 <!-- LOADING -->
 <div id="loading-screen">
   <div class="loading-logo">OPÉRATION 06:45</div>
@@ -946,11 +1046,12 @@ footer {
       <div class="info-icon">🩹</div>
       <div class="info-content">
         <div class="info-title">À ne pas oublier</div>
-        <div class="info-desc">Pense à emporter du strap ainsi qu'une attelle. Tu n'en auras peut-être pas besoin... mais mieux vaut les avoir avec toi. Pour ton genou je précise. </div>
+        <div class="info-desc">Pense à emporter du strap ainsi qu'une attelle. Tu n'en auras peut-être pas besoin... mais mieux vaut les avoir avec toi.</div>
       </div>
     </div>
   </div>
 </section>
+
 <!-- ============================================================
      COMPTE À REBOURS GLOBAL
      ============================================================ -->
@@ -1210,16 +1311,29 @@ footer {
 <!-- ============================================================
      JAVASCRIPT
      ============================================================ -->
-<script>
+<script type="module">
+/* ============================================================
+   FIREBASE — imports partagés
+   Pilotage à distance depuis admin.html en temps réel.
+   Si Firebase est injoignable (hors-ligne, etc.), le site continue
+   de fonctionner normalement avec les valeurs par défaut ci-dessous.
+   ============================================================ */
+import { db } from './firebase-config.js';
+import { ref, onValue } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js';
+
 /* ============================================================
    ╔══════════════════════════════════════╗
    ║   CONFIGURATION — MODIFIER ICI      ║
+   ║   (valeurs par défaut / secours)     ║
    ╚══════════════════════════════════════╝
    ============================================================ */
 
-// ► DATE CIBLE DU COMPTE À REBOURS GLOBAL
+// ► DATE CIBLE DU COMPTE À REBOURS GLOBAL (valeur par défaut)
 // Format: AAAA, MM-1 (0=Jan, 9=Oct), JJ, HH, MM
-const TARGET_DATE = new Date(2026, 9, 19, 6, 45, 0); // 19 octobre 2025 à 06:45
+// Cette valeur est utilisée tant qu'aucune date n'a été définie
+// dans Firebase (config/targetDate). Modifiable depuis admin.html.
+const DEFAULT_TARGET_DATE = new Date(2026, 9, 19, 6, 45, 0); // 19 octobre 2025 à 06:45
+let TARGET_DATE = DEFAULT_TARGET_DATE;
 
 // ► LES 13 ÉNIGMES
 // Pour chaque énigme :
@@ -1230,83 +1344,87 @@ const TARGET_DATE = new Date(2026, 9, 19, 6, 45, 0); // 19 octobre 2025 à 06:45
 const ENIGMES = [
   {
     unlockDate: new Date(2026, 6, 18, 23, 23, 0), // Samedi 18 juillet — 23h23
-    title: "FRAGMENT I — Le Double Jeu",
-    text: "Pendant que ton horizon s'illumine à l'Ouest, mon élan défie les cimes de l'Est. La gravité n'est qu'un compte à rebours : quand les roues cessent de mordre la poussière, le point de départ revient à la charge dans l'ombre.",
-    keyword: "LE TRIUMVIRAT"
+    title: "FRAGMENT I — Le réveil",
+    text: "Chaque aventure commence avant le lever du soleil, il faut parfois accepter de partir sans tout comprendre.",
+    keyword: "RENARD"
   },
   {
     unlockDate: new Date(2026, 6, 29, 18, 4, 0), // Mercredi 29 juillet — 18h04
-    title: "FRAGMENT II — Les Retrouvailles du Sphinx",
-    text: "La surprise est passée, les visages sont assemblés, mais le mouvement ne fait que commencement. Trois paires de mains guident tes pas, mais l'axe de la rotation reste invisible.",
-    keyword: "CYCLOÏDE"
+    title: "FRAGMENT II — Les marées",
+    text: "L'eau avance, puis recule, sans jamais se tromper.",
+    keyword: "ANCRE"
   },
   {
     unlockDate: new Date(2026, 7, 8, 11, 11, 0), // Samedi 8 août — 11h11
-    title: "FRAGMENT III — La Trajectoire Courbe",
-    text: "Ni ligne droite, ni chute libre. C’est une courbe parfaite tracée par un point sur une roue en plein élan. Elle dicte notre direction sans que tu puisses en voir le centre.",
-    keyword: "PRÉCIPITE"
+    title: "FRAGMENT III — Les artistes",
+    text: "Les couleurs racontent parfois plus que les mots, il suffit d'observer.",
+    keyword: "DESSIN"
   },
   {
     unlockDate: new Date(2026, 7, 18, 14, 0, 0), // Mardi 18 août — 14h00
-    title: "FRAGMENT IV — L'Ombre sur la Ville",
-    text: "Perchée très haut, elle observe la foule des mortels sans jamais cligner de ses yeux de pierre. Elle attend que les voyageurs s'égarent dans son labyrinthe.",
-    keyword: "LA STRYGE"
+    title: "FRAGMENT IV — Le vent",
+    text: "Invisible il accompagne tous ceux qui prennent le large.",
+    keyword: "ZÉPHYR"
   },
   {
     unlockDate: new Date(2026, 7, 28, 20, 0, 0), // Vendredi 28 août — 20h00
-    title: "FRAGMENT V — La Forge d’Héphaïstos",
-    text: "Née de la révolution des machines et du feu, elle a été détestée avant d’être adulée. Une armure géante ajourée qui ne craint que le temps qui passe.",
-    keyword: "MÉTALLURGIQUE"
+    title: "FRAGMENT V — Le port",
+    text: "Certains arrivent, d'autres repartent.",
+    keyword: "VOILIER"
   },
   {
     unlockDate: new Date(2026, 8, 7, 8, 0, 0), // Lundi 7 septembre — 08h00
-    title: "FRAGMENT VI — Le Point de Non-Retour",
-    text: "Un pas de plus vers l'abîme. Quand l'aiguille tournera dans le bon sens, la descente sera si rapide que toute tentative de résistance sera vaine.",
-    keyword: "AU"
+    title: "FRAGMENT VI — Les quais",
+    text: "Les pas résonnent près de l'eau, doucement, longtemps, sans bruit.",
+    keyword: "BRUME"
   },
   {
     unlockDate: new Date(2026, 8, 17, 17, 17, 0), // Jeudi 17 septembre — 17h17
-    title: "FRAGMENT VII — Le Maître des Courants",
-    text: "Il aspire tout ce qui ose s'en approcher. Un centre d'attraction liquide qui engloutit l'histoire et recrache les secrets au compte-gouttes.",
-    keyword: "VORTEX"
+    title: "FRAGMENT VII — Les mouettes",
+    text: "Elles connaissent toujours le chemin.",
+    keyword: "SOLEIL"
   },
   {
     unlockDate: new Date(2026, 8, 27, 19, 0, 0), // Dimanche 27 septembre — 19h00
-    title: "FRAGMENT VIII — Le Miroir Inversé",
-    text: "Regarde l'eau sous le pont : ce que tu y vois n'est pas le ciel, mais le reflet d'une illusion que nous construisons pour toi depuis l'été.",
-    keyword: "DES"
+    title: "FRAGMENT VIII — Les pavés",
+    text: "Les rues anciennes racontent des histoires, elles méritent qu'on prenne son temps.",
+    keyword: "BASKETS"
   },
   {
     unlockDate: new Date(2026, 9, 2, 16, 30, 0), // Vendredi 2 octobre — 16h30
-    title: "FRAGMENT IX — Les Secrets Ensevelis",
-    text: "Couche après couche, le temps dépose ses morceaux de passé. Il faut creuser sous la surface pour comprendre où la terre a décidé de se souvenir.",
-    keyword: "SÉDIMENTS"
+    title: "FRAGMENT IX — Le clocher",
+    text: "Il domine la ville depuis toujours.",
+    keyword: "ROCHER"
   },
   {
     unlockDate: new Date(2026, 9, 7, 12, 0, 0), // Mercredi 7 octobre — 12h00
-    title: "FRAGMENT X — L'Ancienne Cité",
-    text: "Avant les grands boulevards, avant les lumières de la nuit, il n'y avait qu'une île de boue au milieu des eaux sauvages où un peuple de marins avait trouvé refuge.",
-    keyword: "LUTÉCIENS"
+    title: "FRAGMENT X — Les souvenirs",
+    text: "Une image suffit parfois à tout raconter, même, des années plus tard.",
+    keyword: "RIVAGE"
   },
   {
     unlockDate: new Date(2026, 9, 11, 21, 0, 0), // Dimanche 11 octobre — 21h00
-    title: "FRAGMENT XI — Le Grand Assemblage",
-    text: "Les pièces du puzzle sont éparpillées dans ta mémoire depuis juillet. Réunis les mots découverts dans l'ordre de leur apparition, mais ne cherche pas le sens là où tes yeux s'arrêtent.",
-    keyword: "(Pas de mot-clé, l'énigme elle-même est la consigne)"
+    title: "FRAGMENT XI — Le secret",
+    text: "Certaines réponses méritent d'attendre.",
+    keyword: "SOLEIL"
   },
   {
     unlockDate: new Date(2026, 9, 14, 18, 30, 0), // Mercredi 14 octobre — 18h30
-    title: "FRAGMENT XII — L'Outil des Sages",
-    text: "Pour briser le sceau, tu devras traduire le langage des anciens et chercher quelle capitale moderne a été bâtie sur les marécages de Lutèce sous l'œil de ses monstres de fer.",
-    keyword: "(Indice de décodage)"
+    title: "FRAGMENT XII — La confiance",
+    text: "Les apparences sont parfois trompeuses, mais les meilleurs souvenirs commencent souvent ainsi.",
+    keyword: "-------"
   },
   {
     unlockDate: new Date(2026, 9, 16, 22, 22, 0), // Vendredi 16 octobre — 22h22
-    title: "FRAGMENT XIII — L'Ultime Sommation",
-    text: "Le Triumvirat réclame ta présence. Demain, ton sac doit être prêt. Ne cherche plus le lieu, c'est le lieu qui viendra à toi à la première heure.",
-    keyword: "(Annonce du départ imminent)"
+    title: "FRAGMENT XIII — Le dernier fragment",
+    text: "Si tu crois avoir trouvé la destination, garde malgré tout un doute. Les plus belles surprises sont celles qu'on ne voit jamais venir.",
+    keyword: "-------"
   }
 ];
+
+// Conserve la date d'origine (codée en dur) de chaque énigme afin de
+// pouvoir y revenir automatiquement si la donnée est retirée de Firebase.
+ENIGMES.forEach(e => { e.defaultUnlockDate = e.unlockDate; });
 
 /* ============================================================
    POLAROIDS — CONFIGURATION
@@ -1381,6 +1499,7 @@ function formatCountdownShort(diff) {
    ============================================================ */
 function buildEnigmes() {
   const list = document.getElementById('enigmes-list');
+  list.innerHTML = ''; // permet un ré-affichage propre lors des mises à jour Firebase
   const now  = new Date();
 
   ENIGMES.forEach((e, i) => {
@@ -1422,7 +1541,28 @@ function buildEnigmes() {
   });
 }
 
-buildEnigmes();
+/* ============================================================
+   SCROLL REVEAL (défini avant le premier rendu des énigmes
+   pour pouvoir observer les cartes dès leur création)
+   ============================================================ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Construit (ou reconstruit) la liste des énigmes puis observe les
+// nouvelles cartes pour l'animation d'apparition au scroll.
+function renderEnigmes() {
+  buildEnigmes();
+  document.querySelectorAll('.enigme-card.reveal').forEach(el => observer.observe(el));
+}
+
+renderEnigmes();
 
 /* ============================================================
    MISE À JOUR DES COMPTES À REBOURS ÉNIGMES
@@ -1453,22 +1593,120 @@ function updateEnigmeCountdowns() {
 setInterval(updateEnigmeCountdowns, 1000);
 
 /* ============================================================
-   SCROLL REVEAL
+   SYNCHRONISATION FIREBASE (piloté depuis admin.html)
+   ------------------------------------------------------------
+   - config/targetDate  → écrase TARGET_DATE si présent
+   - enigmes/{1..13}/date → écrase la date de chaque énigme
+   - notifications/{id}  → affichées en temps réel (toasts)
+   Tant qu'aucune donnée n'existe encore dans Firebase, les valeurs
+   par défaut définies plus haut dans ce fichier restent utilisées.
    ============================================================ */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
+
+// ► Date cible globale
+onValue(ref(db, 'config/targetDate'), (snapshot) => {
+  const value = snapshot.val();
+  if (value) {
+    const parsed = new Date(value);
+    if (!isNaN(parsed.getTime())) {
+      TARGET_DATE = parsed;
+      updateGlobalCountdown();
+    }
+  } else {
+    TARGET_DATE = DEFAULT_TARGET_DATE;
+  }
+});
+
+// ► Dates des 13 énigmes
+onValue(ref(db, 'enigmes'), (snapshot) => {
+  const value = snapshot.val();
+  let hasChanges = false;
+
+  ENIGMES.forEach((enigme, i) => {
+    const firebaseKey = String(i + 1); // 1..13, cohérent avec admin.html
+    const remote = value ? value[firebaseKey] : null;
+
+    if (remote && remote.date) {
+      const parsed = new Date(remote.date);
+      if (!isNaN(parsed.getTime())) {
+        enigme.unlockDate = parsed;
+        hasChanges = true;
+        return;
+      }
+    }
+    // Pas de donnée distante pour cette énigme → on revient à la valeur
+    // par défaut d'origine si elle avait été modifiée précédemment.
+    if (enigme.unlockDate.getTime() !== enigme.defaultUnlockDate.getTime()) {
+      enigme.unlockDate = enigme.defaultUnlockDate;
+      hasChanges = true;
     }
   });
-}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  if (hasChanges) {
+    renderEnigmes();
+  }
+});
 
-// Observer dynamique pour les énigmes générées
-setTimeout(() => {
-  document.querySelectorAll('.enigme-card.reveal').forEach(el => observer.observe(el));
-}, 100);
+// ► Notifications temps réel
+const DISMISSED_STORAGE_KEY = 'op0645_dismissed_notifications';
+
+function getDismissedNotifications() {
+  try {
+    return JSON.parse(localStorage.getItem(DISMISSED_STORAGE_KEY)) || [];
+  } catch (err) {
+    return [];
+  }
+}
+
+function markNotificationDismissed(dismissId) {
+  const dismissed = getDismissedNotifications();
+  if (!dismissed.includes(dismissId)) {
+    dismissed.push(dismissId);
+    localStorage.setItem(DISMISSED_STORAGE_KEY, JSON.stringify(dismissed));
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
+function renderNotifications(data) {
+  const container = document.getElementById('notif-container');
+  if (!container) return;
+  container.innerHTML = '';
+  if (!data) return;
+
+  const dismissed = getDismissedNotifications();
+
+  const notifications = Object.entries(data)
+    .map(([id, n]) => ({ id, ...n }))
+    .filter(n => n.visible !== false) // affichée par défaut sauf si explicitement masquée
+    .map(n => ({ ...n, dismissId: `${n.id}_${n.createdAt || ''}` }))
+    .filter(n => !dismissed.includes(n.dismissId))
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+  notifications.forEach(n => {
+    const toast = document.createElement('div');
+    toast.className = 'notif-toast';
+    toast.innerHTML = `
+      <button class="notif-close" aria-label="Fermer la notification">✕</button>
+      <div class="notif-eyebrow"><span>⚠</span> Message classifié</div>
+      <div class="notif-title">${escapeHtml(n.title)}</div>
+      <div class="notif-message">${escapeHtml(n.message)}</div>
+    `;
+    toast.querySelector('.notif-close').addEventListener('click', () => {
+      toast.classList.add('closing');
+      markNotificationDismissed(n.dismissId);
+      setTimeout(() => toast.remove(), 350);
+    });
+    container.appendChild(toast);
+  });
+}
+
+onValue(ref(db, 'notifications'), (snapshot) => {
+  renderNotifications(snapshot.val());
+});
 
 </script>
 </body>

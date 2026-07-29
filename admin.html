@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMIN — OPÉRATION 06:45</title>
+<link rel="icon" type="image/png" href="iconeenigmes.png?v=12">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Special+Elite&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- ================================================================
+     ÉCRAN DE CONNEXION
+     ================================================================ -->
+<div id="login-screen">
+  <form class="login-card" id="login-form" autocomplete="off">
+    <div class="corner-ornament tl"></div>
+    <div class="corner-ornament tr"></div>
+    <div class="corner-ornament bl"></div>
+    <div class="corner-ornament br"></div>
+
+    <div class="login-eyebrow">Accès restreint · Niveau rouge</div>
+    <div class="login-title">Poste de<br>Commandement</div>
+
+    <div class="login-field">
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" required autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label for="login-password">Mot de passe</label>
+      <input type="password" id="login-password" required autocomplete="current-password">
+    </div>
+
+    <button type="submit" class="btn" id="login-btn">Se connecter</button>
+    <div class="login-error" id="login-error"></div>
+  </form>
+</div>
+
+<!-- ================================================================
+     APPLICATION ADMIN (visible une fois connecté)
+     ================================================================ -->
+<div id="admin-app">
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-eyebrow">Dossier confidentiel</div>
+      <div class="sidebar-brand-title">Opération 06:45<br>— Admin</div>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><button class="nav-link active" data-page="dashboard"><span class="nav-icon">🏠</span> Tableau de bord</button></li>
+      <li><button class="nav-link" data-page="notifications"><span class="nav-icon">📢</span> Notifications</button></li>
+      <li><button class="nav-link" data-page="enigmes"><span class="nav-icon">🧩</span> Énigmes</button></li>
+      <li><button class="nav-link" data-page="countdown"><span class="nav-icon">⏳</span> Compte à rebours</button></li>
+      <li><button class="nav-link" data-page="settings"><span class="nav-icon">⚙</span> Paramètres</button></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebar-user">—</div>
+      <button class="btn btn-ghost" id="logout-btn">Déconnexion</button>
+    </div>
+  </aside>
+
+  <div style="flex:1; min-width:0;">
+    <div class="mobile-topbar">
+      <button class="menu-toggle" id="menu-toggle">☰</button>
+      <div class="mobile-topbar-title">Admin — 06:45</div>
+      <div style="width:2.2rem;"></div>
+    </div>
+
+    <main class="main-content">
+
+      <!-- ============================================================
+           TABLEAU DE BORD
+           ============================================================ -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div class="page-eyebrow">Vue d'ensemble</div>
+          <div class="page-title">Tableau de bord</div>
+          <div class="page-desc">Aperçu rapide de l'état du dossier « Opération 06:45 ».</div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpi-notif-count">—</div>
+            <div class="kpi-label">Notifications actives</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpi-enigmes-locked">—</div>
+            <div class="kpi-label">Énigmes verrouillées</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpi-enigmes-unlocked">—</div>
+            <div class="kpi-label">Énigmes déverrouillées</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpi-target-date">—</div>
+            <div class="kpi-label">Date finale programmée</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Raccourcis</div>
+          <div class="form-actions">
+            <button class="btn" style="width:auto;" data-goto="notifications">📢 Envoyer une notification</button>
+            <button class="btn btn-ghost" data-goto="enigmes">🧩 Modifier les énigmes</button>
+            <button class="btn btn-ghost" data-goto="countdown">⏳ Modifier la date finale</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           NOTIFICATIONS
+           ============================================================ -->
+      <section class="page" id="page-notifications">
+        <div class="page-header">
+          <div class="page-eyebrow">Diffusion en temps réel</div>
+          <div class="page-title">Notifications</div>
+          <div class="page-desc">Envoie un message qui apparaît instantanément sur le site, sans rechargement.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" id="notif-form-title">Nouvelle notification</div>
+          <input type="hidden" id="notif-edit-id" value="">
+          <div class="field">
+            <label for="notif-title-input">Titre</label>
+            <input type="text" id="notif-title-input" maxlength="80" placeholder="Ex : Nouveau fragment disponible">
+          </div>
+          <div class="field">
+            <label for="notif-message-input">Message</label>
+            <textarea id="notif-message-input" maxlength="500" placeholder="Ex : Le fragment IV vient d'être déverrouillé..."></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn" id="notif-send-btn" style="width:auto;">Envoyer</button>
+            <button class="btn btn-ghost" id="notif-cancel-edit-btn" style="width:auto; display:none;">Annuler la modification</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Historique</div>
+          <div id="notif-list"><div class="empty-state">Chargement…</div></div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           ÉNIGMES
+           ============================================================ -->
+      <section class="page" id="page-enigmes">
+        <div class="page-header">
+          <div class="page-eyebrow">Système d'enquête</div>
+          <div class="page-title">Les 13 énigmes</div>
+          <div class="page-desc">Modifie la date/heure de déverrouillage de chaque énigme. Le site se met à jour automatiquement, sans F5.</div>
+        </div>
+
+        <div class="card">
+          <div id="enigmes-editor"><div class="empty-state">Chargement…</div></div>
+          <div class="form-actions">
+            <button class="btn" id="enigmes-save-btn" style="width:auto;">💾 Sauvegarder toutes les dates</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           COMPTE À REBOURS
+           ============================================================ -->
+      <section class="page" id="page-countdown">
+        <div class="page-header">
+          <div class="page-eyebrow">Décompte de mission</div>
+          <div class="page-title">Date finale</div>
+          <div class="page-desc">Cette date remplace TARGET_DATE dans Firebase. Le compte à rebours principal du site se met à jour automatiquement.</div>
+        </div>
+
+        <div class="card">
+          <div class="field">
+            <label for="target-date-input">Date &amp; heure de l'Opération 06:45</label>
+            <input type="datetime-local" id="target-date-input">
+          </div>
+          <div class="list-item-meta" id="target-date-current" style="margin-bottom:1rem;">Date actuelle : —</div>
+          <div class="form-actions">
+            <button class="btn" id="target-date-save-btn" style="width:auto;">💾 Sauvegarder la date finale</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           PARAMÈTRES
+           ============================================================ -->
+      <section class="page" id="page-settings">
+        <div class="page-header">
+          <div class="page-eyebrow">Configuration</div>
+          <div class="page-title">Paramètres</div>
+          <div class="page-desc">Informations sur le compte connecté et le projet Firebase.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Compte connecté</div>
+          <div class="list-item-sub" id="settings-user-email">—</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Projet Firebase</div>
+          <div class="list-item-sub">Project ID : enigmes-18-ans-nalya-1f5c5</div>
+          <div class="list-item-sub">Realtime Database : enigmes-18-ans-nalya-1f5c5-default-rtdb</div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div id="admin-toast-container"></div>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>
