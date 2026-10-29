@@ -603,6 +603,7 @@ section {
 }
 .indice-grid {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1rem;
 }
 .indice-item-title {
@@ -775,7 +776,7 @@ footer {
       Bonne nouvelle : <strong>aucune activité physique</strong> n'est prévue, donc pas de tenue de sport. Habille-toi comme tu en as envie, mais Lise saura te conseiller.
     </p>
     <p class="depart-text">
-      En revanche, on va <strong>pas mal marcher</strong>, donc prend des chaussures basiques. Des chaussures de randonnée ou des talons aiguilles ne sont pas vraiment conseillés.
+      En revanche, on va <strong>pas mal marcher</strong>, donc prend des chaussures basiques.
     </p>
     <p class="depart-text">
     Fin octobre, les températures peuvent vite varier au cours de la journée. Il fera beau, mais pense quand même à prendre une petite veste, histoire de ne pas avoir froid le matin ou en fin de journée ! ☀️</p>
@@ -933,7 +934,7 @@ footer {
 </section>
 
 <!-- ============================================================
-     INDICE VISUEL 
+     INDICE VISUEL — Tour Effeil
      ============================================================ -->
 <section class="reveal">
   <div class="section-label">Indice visuel</div>
@@ -943,6 +944,20 @@ footer {
       <div class="indice-frame">
         <canvas id="indice-canvas-1" role="img" aria-label="Image pixelisée : indice 1"></canvas>
         <div class="indice-placeholder" id="indice-placeholder-1">Image en cours de développement…</div>
+      </div>
+    </div>
+    <div>
+      <div class="indice-item-title">Fragment visuel II</div>
+      <div class="indice-frame">
+        <canvas id="indice-canvas-2" role="img" aria-label="Image pixelisée : indice 2"></canvas>
+        <div class="indice-placeholder" id="indice-placeholder-2">Image en cours de développement…</div>
+      </div>
+    </div>
+    <div>
+      <div class="indice-item-title">Fragment visuel III</div>
+      <div class="indice-frame">
+        <canvas id="indice-canvas-3" role="img" aria-label="Image pixelisée : indice 3"></canvas>
+        <div class="indice-placeholder" id="indice-placeholder-3">Image en cours de développement…</div>
       </div>
     </div>
   </div>
@@ -1080,7 +1095,7 @@ footer {
      ============================================================ -->
 <script>
 /* ============================================================
-   ⚙️ RÉGLAGES
+   ⚙️ RÉGLAGES — c'est ici que tu modifies les choses
    ============================================================ */
 
 // ► DATE DU DÉPART (compte à rebours)
@@ -1113,7 +1128,7 @@ backgroundMusic.addEventListener('error', () => {
 
 // ► IMAGES-INDICES
 // Chemins des images à pixeliser (dans le même dossier que index.html).
-const IMAGE_SRCS = ['indice.jpg'];
+const IMAGE_SRCS = ['indice.jpg', 'indice2.jpg', 'indice3.jpg'];
 
 // ► NIVEAU DE PIXELISATION
 // = nombre de "gros pixels" sur la LARGEUR de l'image.
