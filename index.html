@@ -592,63 +592,6 @@ section {
 }
 
 /* ============================================================
-   FAUX PORTAIL DE TÉLÉCHARGEMENT
-   ============================================================ */
-.billets-card {
-  margin-top: 1.5rem;
-  padding: 1.4rem 1.1rem;
-  border: 1px solid var(--rouge);
-  background: linear-gradient(135deg, rgba(45,8,5,0.95), rgba(14,8,4,0.97));
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-  text-align: center;
-}
-.billets-title {
-  color: var(--or-light);
-  font-family: 'Playfair Display', serif;
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-bottom: 0.7rem;
-}
-.billets-text {
-  color: var(--creme-dark);
-  font-size: 0.78rem;
-  line-height: 1.7;
-  margin-bottom: 1rem;
-}
-.billets-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  justify-content: center;
-}
-.billets-input {
-  min-width: min(100%, 220px);
-  padding: 0.7rem;
-  border: 1px solid var(--brun-light);
-  background: var(--noir);
-  color: var(--creme);
-  font: inherit;
-  text-align: center;
-}
-.billets-button {
-  padding: 0.7rem 1rem;
-  border: 1px solid var(--or-dim);
-  background: var(--brun-mid);
-  color: var(--or-light);
-  cursor: pointer;
-  font: inherit;
-}
-.billets-button:active { transform: translateY(1px); }
-.billets-status {
-  min-height: 1.4em;
-  margin-top: 1rem;
-  color: #e86060;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* ============================================================
    INDICE VISUEL (image pixelisée)
    ============================================================ */
 .indice-frame {
@@ -832,12 +775,11 @@ footer {
       Bonne nouvelle : <strong>aucune activité physique</strong> n'est prévue, donc pas de tenue de sport. Habille-toi comme tu en as envie, mais Lise saura te conseiller.
     </p>
     <p class="depart-text">
-      En revanche, on va <strong>pas mal marcher</strong>, donc prend des chaussures basiques et confortables. Pas besoin de bottes de randonnée ni de talons aiguilles.
+      En revanche, on va <strong>pas mal marcher</strong>, donc prend des chaussures basiques.
     </p>
     <p class="depart-text">
-      Fin octobre, les températures changent vite au fil de la journée. La météo s'annonce bonne. Mais on ne sait jamais, donc prévois une veste légère pour le soir et le matin.
-  </div>
-  </div>
+    Fin octobre, les températures peuvent vite varier au cours de la journée. Il fera beau, mais pense quand même à prendre une petite veste, histoire de ne pas avoir froid le matin ou en fin de journée ! ☀️</p>
+
 </section>
 
 <!-- ============================================================
@@ -991,7 +933,7 @@ footer {
 </section>
 
 <!-- ============================================================
-     INDICE VISUEL — 
+     INDICE VISUEL — Tour Effeil
      ============================================================ -->
 <section class="reveal">
   <div class="section-label">Indice visuel</div>
@@ -1003,10 +945,8 @@ footer {
         <div class="indice-placeholder" id="indice-placeholder-1">Image en cours de développement…</div>
       </div>
     </div>
-    
-    </div>
   </div>
-  <p class="indice-caption">Trois fragments, un seul secret. Regarde bien : ce qu'ils cachent compte.</p>
+  <p class="indice-caption">Un fragment, un seul secret. Regarde bien : ce qu'il cache compte.</p>
 </section>
 
 <!-- ============================================================
@@ -1171,20 +1111,9 @@ backgroundMusic.addEventListener('error', () => {
   console.error('La musique d’ambiance est introuvable ou ne peut pas être lue.');
 });
 
-// ► FAUX PORTAIL DES BILLETS
-// Le PDF réel n'est pas référencé dans cette page afin de préserver la surprise.
-const billetsForm = document.getElementById('billets-form');
-const billetsAnswer = document.getElementById('billets-answer');
-const billetsStatus = document.getElementById('billets-status');
-billetsForm.addEventListener('submit', event => {
-  event.preventDefault();
-  billetsStatus.textContent = 'ACCÈS REFUSÉ — réponse incorrecte. Le dossier reste classifié.';
-  billetsAnswer.select();
-});
-
 // ► IMAGES-INDICES
 // Chemins des images à pixeliser (dans le même dossier que index.html).
-const IMAGE_SRCS = ['indice.jpg', 'indice2.jpg', 'indice3.jpg'];
+const IMAGE_SRCS = ['indice.jpg'];
 
 // ► NIVEAU DE PIXELISATION
 // = nombre de "gros pixels" sur la LARGEUR de l'image.
